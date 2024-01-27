@@ -5,34 +5,66 @@ using UnityEngine;
 public class VoiceWave : MonoBehaviour {
     private VoiceWaveLineRendererEx rendererEx;
 
-    public ArcModel arc;
-    public Wall wall;
+    public ArcModel Arc;
+    public ArcLinkModel LeftLink, RightLink;
 
+    public float maximumRadius = 10f;
     public float expansionSpeed = 1.0f;
 
+    // Debug Vars
+    public List<Wall> wallList;
+
     private void Awake() {
-        arc.Center = transform.position;
-        arc.Load();
+        Arc.Center = transform.position;
+        Arc.Load();
 
         rendererEx = GetComponent<VoiceWaveLineRendererEx>();
-        rendererEx.arc = arc;
+        rendererEx.arc = Arc;
+    }
+
+    private void ExamineCollision() {
+
     }
 
     private void Update() {
-        (bool collision, double radius) = GeoLib.ArcCollisionRadiusWithSegment(arc, wall.seg);
+        //(bool collision, double radius) = GeoLib.ArcCollisionRadiusWithSegment(Arc, wall.seg);
 
-        Debug.LogFormat("VoiceWave PredictedDistanceToArc {0} {1}", collision, radius);
+        //Debug.LogFormat("VoiceWave PredictedDistanceToArc {0} {1}", collision, radius);
 
-        if (collision && arc.Radius >= radius || arc.Radius > 10f) {
-            arc.Angle.StartAngle += arc.Angle.AngleRange;
-            if (arc.Angle.StartAngle > Math.PI * 2f) {
-                arc.Angle.StartAngle -= Math.PI * 2f;
+        //if (collision && Arc.Radius >= radius || Arc.Radius > maximumRadius) {
+        //    Arc.Angle.StartAngle += Arc.Angle.AngleRange;
+        //    if (Arc.Angle.StartAngle > Math.PI * 2f) {
+        //        Arc.Angle.StartAngle -= Math.PI * 2f;
+        //    }
+        //    Arc.Radius = 1;
+        //    Arc.Load();
+        //    return;
+        //}
+        Arc.Radius += Time.deltaTime * expansionSpeed;
+        rendererEx.SetupCircle();
+    }
+
+    public bool IsRemovable() {
+        if (!Arc.isEmpty()) {
+            return false;
+        }
+        if (LeftLink != null) {
+            if (LeftLink.ArcStatus(Arc) == ArcEndPointStatus.ArcEndPointStatusExpanding) {
+                return false;
             }
-            arc.Radius = 1;
-            arc.Load();
+        }
+        if (RightLink != null) {
+            if (RightLink.ArcStatus(Arc) == ArcEndPointStatus.ArcEndPointStatusExpanding) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void Expand(double RadDelta) {
+        if (RadDelta < 0) {
+            Debug.LogAssertionFormat("Arc Expand delta {0} < 0", RadDelta);
             return;
         }
-        arc.Radius += Time.deltaTime * expansionSpeed;
-        rendererEx.SetupCircle();
     }
 }

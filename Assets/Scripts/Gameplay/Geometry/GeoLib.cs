@@ -45,7 +45,6 @@ public class GeoLib {
     public static double ConvertRadiansToDegrees(double radians) {
         return radians * (180.0 / Math.PI);
     }
-
     public static bool IsAngleWithinArc(ArcModel arc, double angle) {
         double StartAngle = arc.Angle.StartAngle;
         double EndAngle = arc.Angle.EndAngle;
@@ -54,12 +53,12 @@ public class GeoLib {
         if (StartAngle < EndAngle) {
             res = angle >= StartAngle && angle <= EndAngle;
         } else {
-            /// A 360 flip is included
+            // A 360 flip is included
             double angleExt = angle + Math.PI * 2f;
             double endAngleExt = EndAngle + Math.PI * 2f;
             res = angle >= StartAngle && angle <= endAngleExt || angleExt >= StartAngle && angleExt <= endAngleExt;
         }
-        Debug.LogFormat("IsAngleWithinArc {0} StartAngle {1} EndAngle {2} angle {3}", res, StartAngle, EndAngle, angle);
+        // Debug.LogFormat("IsAngleWithinArc {0} StartAngle {1} EndAngle {2} angle {3}", res, StartAngle, EndAngle, angle);
         return res;
     }
     public static bool IsSegmentWithinArc(ArcModel arc, SegmentModel seg) {
@@ -82,30 +81,19 @@ public class GeoLib {
         double StartAngle = arc.Angle.StartAngle;
         double EndAngle = arc.Angle.StartAngle + arc.Angle.AngleRange;
 
-        Debug.LogFormat("IsSegmentWithinArc segA {0} segB {1} arcA {2} arcB {3}", segAAngle, segBAngle, StartAngle, EndAngle);
+        // Debug.LogFormat("IsSegmentWithinArc segA {0} segB {1} arcA {2} arcB {3}", segAAngle, segBAngle, StartAngle, EndAngle);
         bool res;
         res = segAAngle >= StartAngle && segAAngle <= EndAngle || segBAngle >= StartAngle && segBAngle <= EndAngle ||
               segAAngle <= StartAngle && segBAngle >= EndAngle || segAAngle >= StartAngle && segBAngle >= EndAngle;
         if (EndAngle > Math.PI * 2f) {
             segAAngle += Math.PI * 2f;
             segBAngle += Math.PI * 2f;
-            Debug.LogFormat("IsSegmentWithinArc new segA {0} segB {1} arcA {2} arcB {3}", segAAngle, segBAngle, StartAngle, EndAngle);
+            // Debug.LogFormat("IsSegmentWithinArc new segA {0} segB {1} arcA {2} arcB {3}", segAAngle, segBAngle, StartAngle, EndAngle);
             res = res || (segAAngle >= StartAngle && segAAngle <= EndAngle || segBAngle >= StartAngle && segBAngle <= EndAngle ||
                   segAAngle <= StartAngle && segBAngle >= EndAngle || segAAngle >= StartAngle && segBAngle >= EndAngle);
         }
         return res;
     }
-
-    public class LineSegment2D {
-        public (double x, double y) PointA;
-        public (double x, double y) PointB;
-
-        public LineSegment2D(double x1, double y1, double x2, double y2) {
-            PointA = (x1, y1);
-            PointB = (x2, y2);
-        }
-    }
-
     public static (bool, double) RayLineSegmentIntersection(RayModel ray, SegmentModel lineSegment) {
         double r_px = ray.Origin.x;
         double r_py = ray.Origin.y;
@@ -125,7 +113,7 @@ public class GeoLib {
         double u = (-r_dy * (r_px - s_px) + r_dx * (r_py - s_py)) / det;
         double t = (s_dx * (r_py - s_py) - s_dy * (r_px - s_px)) / det;
 
-        Debug.LogFormat("RayLineSegmentIntersection u {0}, t {1}", u, t);
+        // Debug.LogFormat("RayLineSegmentIntersection u {0}, t {1}", u, t);
 
         if (t >= 0 && u >= 0 && u <= 1) {
             double distance = Math.Sqrt(r_dx * r_dx + r_dy * r_dy) * t;
@@ -134,7 +122,6 @@ public class GeoLib {
 
         return (false, double.PositiveInfinity);
     }
-
     public static (bool, double, double) PerpendicularIntersection(Vector2 p, SegmentModel seg) {
         // Calculate the directional vectors of the line segment
         double dx = seg.PointB.x - seg.PointA.x;
@@ -160,7 +147,7 @@ public class GeoLib {
 
             // Calculate the angle
             double angle = NormalizeAngle(Math.Atan2(dyp, dxp));
-            Debug.LogFormat("PerpendicularIntersection dxp {0}, dyp {1}, angle {2}", dxp, dyp, angle);
+            // Debug.LogFormat("PerpendicularIntersection dxp {0}, dyp {1}, angle {2}", dxp, dyp, angle);
 
             return (true, angle, distance);
         } else {
@@ -175,20 +162,20 @@ public class GeoLib {
 
         RayModel rayA = new RayModel(arc.Center, arc.Angle.StartAngle);
         (bool rayACollision, double rayADist) = RayLineSegmentIntersection(rayA, seg);
-        Debug.LogFormat("ArcCollisionRadiusWithSegment rayA Collision {0}, Dist {1}", rayACollision, rayADist);
+        // Debug.LogFormat("ArcCollisionRadiusWithSegment rayA Collision {0}, Dist {1}", rayACollision, rayADist);
         RayModel rayB = new RayModel(arc.Center, arc.Angle.EndAngle);
-        Debug.LogFormat("ArcCollisionRadiusWithSegment arc {0}, rayB {1}", arc.Description(), rayB.Description());
+        // Debug.LogFormat("ArcCollisionRadiusWithSegment arc {0}, rayB {1}", arc.Description(), rayB.Description());
         (bool rayBCollision, double rayBDist) = RayLineSegmentIntersection(rayB, seg);
-        Debug.LogFormat("ArcCollisionRadiusWithSegment rayB Collision {0}, Dist {1}", rayBCollision, rayBDist);
+        // Debug.LogFormat("ArcCollisionRadiusWithSegment rayB Collision {0}, Dist {1}", rayBCollision, rayBDist);
         (bool perpCollision, double perpAngle, double perpDist) = PerpendicularIntersection(arc.Center, seg);
         if (perpCollision) {
             bool isPerpInSegment = IsAngleWithinArc(arc, perpAngle);
-            Debug.LogFormat("ArcCollisionRadiusWithSegment perp Collision {0}, isWithin {1}, Angle {2}, Dist {3}", perpCollision, isPerpInSegment, perpAngle, perpDist);
+            // Debug.LogFormat("ArcCollisionRadiusWithSegment perp Collision {0}, isWithin {1}, Angle {2}, Dist {3}", perpCollision, isPerpInSegment, perpAngle, perpDist);
             perpCollision = perpCollision && isPerpInSegment;
         } else {
-            Debug.LogFormat("ArcCollisionRadiusWithSegment perp Collision {0}, Angle{1}, Dist {2}", perpCollision, perpAngle, perpDist);
+            // Debug.LogFormat("ArcCollisionRadiusWithSegment perp Collision {0}, Angle{1}, Dist {2}", perpCollision, perpAngle, perpDist);
         }
-        Debug.LogFormat("ArcCollisionRadiusWithSegment perp Collision {0}, Angle{1}, Dist {2}", perpCollision, perpAngle, perpDist);
+        // Debug.LogFormat("ArcCollisionRadiusWithSegment perp Collision {0}, Angle{1}, Dist {2}", perpCollision, perpAngle, perpDist);
 
         if (!rayACollision && !rayBCollision && !perpCollision) {
             Debug.LogAssertionFormat("ArcCollisionRadiusWithSegment pass check but point non found: arc {0}, seg {1}", arc, seg);

@@ -1,8 +1,5 @@
 using System;
-using Unity.Burst.Intrinsics;
-using UnityEditor.UI;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
 [Serializable]
 public class ArcAngleModel {
@@ -45,21 +42,21 @@ public class ArcModel {
         this.Radius = Radius;
         this.Angle = new ArcAngleModel(StartAngle, AngleRange);
     }
-
     public ArcModel(Vector2 Center, double Radius, double StartAngle, double AngleRange) {
         ContructModel(Center, Radius, StartAngle, AngleRange);
     }
-
     public ArcModel(Vector2 Center, double Radius) {
         ContructModel(Center, Radius, 0f, Math.PI * 2f);
     }
-
     public void Load() {
         Angle.Load();
     }
-
     public string Description() {
         return String.Format("Arc Center {0}, Radius {1}, StartAngle {2}, AngleRange {3}, EndAngle {4}",
                              Center, Radius, Angle.StartAngle, Angle.AngleRange, Angle.EndAngle);
+    }
+
+    public bool isEmpty() {
+        return Angle.AngleRange <= 1e-5f;
     }
 }
