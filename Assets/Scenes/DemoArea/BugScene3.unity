@@ -1114,7 +1114,7 @@ PrefabInstance:
     - target: {fileID: 5826272125667549736, guid: 81fabb9f6205b934980770447ec12170,
         type: 3}
       propertyPath: InitialStrength
-      value: 9
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5826272125667549736, guid: 81fabb9f6205b934980770447ec12170,
         type: 3}
@@ -1139,7 +1139,7 @@ PrefabInstance:
     - target: {fileID: 5826272125667549736, guid: 81fabb9f6205b934980770447ec12170,
         type: 3}
       propertyPath: Arc.Angle.StartAngle
-      value: 0
+      value: -0.1
       objectReference: {fileID: 0}
     - target: {fileID: 5826272125667549736, guid: 81fabb9f6205b934980770447ec12170,
         type: 3}
