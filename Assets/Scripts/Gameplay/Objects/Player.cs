@@ -21,8 +21,6 @@ public class Player : MonoBehaviour
         FaceMousePos();
         TryHandleFireBtn();
         UpdateAimAreaVisibility();
-        // add 45 degree for test icon
-        transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles + new Vector3(0, 0, 45));
     }
 
     void FixedUpdate()
@@ -73,6 +71,7 @@ public class Player : MonoBehaviour
     {
         var ratio = GetPosDeltaRatioByInput();
         GetComponent<Rigidbody2D>().MovePosition(transform.position + ratio * MoveSpeed * Time.fixedDeltaTime);
+        GetComponent<Animator>().SetBool("isMoving", ratio.x != 0 || ratio.y != 0);
     }
 
     private Vector3 GetPosDeltaRatioByInput()
