@@ -736,7 +736,7 @@ PrefabInstance:
     - target: {fileID: 3069588973002525122, guid: 9eaa0b332d965514bbd3081c1ed8e9be,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -51.28
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3069588973002525122, guid: 9eaa0b332d965514bbd3081c1ed8e9be,
         type: 3}
@@ -777,6 +777,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Plane
+      objectReference: {fileID: 0}
+    - target: {fileID: 4521909034855992039, guid: 9eaa0b332d965514bbd3081c1ed8e9be,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4521909034855992039, guid: 9eaa0b332d965514bbd3081c1ed8e9be,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6747321120215749260, guid: 9eaa0b332d965514bbd3081c1ed8e9be,
         type: 3}
@@ -915,7 +925,7 @@ PrefabInstance:
     - target: {fileID: 1464225171478873642, guid: 6d9a14b00ab0c3648807400e4deef8b6,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.07783202
+      value: 44.05
       objectReference: {fileID: 0}
     - target: {fileID: 1464225171478873642, guid: 6d9a14b00ab0c3648807400e4deef8b6,
         type: 3}
@@ -1191,5 +1201,5 @@ SceneRoots:
   - {fileID: 1122767379}
   - {fileID: 490592388}
   - {fileID: 87840556}
-  - {fileID: 394361965}
   - {fileID: 1365024847}
+  - {fileID: 394361965}
