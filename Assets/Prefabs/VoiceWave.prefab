@@ -96,17 +96,17 @@ MonoBehaviour:
     LeftStatus: 0
     RightStatus: 0
   SoundType: 0
-  MaximumRadius: 10
+  MaximumRadius: 99999
   collisionIndex: 0
   collisionList: []
   sourceWall: {fileID: 0}
   MinimumExpansionSpeed: 1
-  ExpansionSpeed: 1
+  ExpansionSpeed: 8
   SpeedRatio: 1
-  InitialStrength: 1
+  InitialStrength: 10
   RuntimeStrength: 1
   StrengthRatio: 1
-  wallList: []
+  isHidden: 0
 --- !u!120 &9046606292534119214
 LineRenderer:
   serializedVersion: 2
