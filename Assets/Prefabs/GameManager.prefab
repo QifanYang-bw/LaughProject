@@ -27,6 +27,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1792555723121859205}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -35,7 +36,6 @@ Transform:
   - {fileID: 2345072122942518248}
   - {fileID: 9033331532298614853}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &58371303186124127
 MonoBehaviour:
@@ -92,6 +92,20 @@ MonoBehaviour:
   - {fileID: 2100000, guid: f507ba5ecd8d254449965231b1cfa2c8, type: 2}
   - {fileID: 2100000, guid: 4ece24ffdcea4124d8bc36f52195d423, type: 2}
   - {fileID: 2100000, guid: de59450dd1a934c4588fbe07ea7711d7, type: 2}
+  WavePrefab: {fileID: 6425850899133785793, guid: 81fabb9f6205b934980770447ec12170,
+    type: 3}
+  TutorialSceneNames:
+  - Tutorial_0
+  - Tutorial_1
+  - Tutorial_2
+  GameLevelSceneNames:
+  - Level_1
+  - Level_2
+  - Level_3
+  - Level_4
+  - Level_5
+  - Level_6
+  - Level_7
   levelScenes:
   - TitleScreenScene
   - Tutorial_0
@@ -164,13 +178,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4524344499302629413}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1681815438678575939}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &7942789979880485994
 AudioSource:
@@ -292,13 +306,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6230923216014978824}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1681815438678575939}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &2724573854565582688
 AudioSource:

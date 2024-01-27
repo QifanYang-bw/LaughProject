@@ -208,6 +208,12 @@ MonoBehaviour:
   twistEffect: {fileID: 0}
   blurEffect: {fileID: 0}
   Npcs: []
+--- !u!1 &177738081 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6984596363392335903, guid: 34f54ef0c5587dc49a25a38a0d13cd0b,
+    type: 3}
+  m_PrefabInstance: {fileID: 7665317943366070741}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &215382337
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1065,6 +1071,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6342505425103112296, guid: 6d9a14b00ab0c3648807400e4deef8b6,
+        type: 3}
+      propertyPath: RelatedSpeakerList.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6342505425103112296, guid: 6d9a14b00ab0c3648807400e4deef8b6,
+        type: 3}
+      propertyPath: RelatedSpeakerList.Array.data[0]
+      value: 
+      objectReference: {fileID: 177738081}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

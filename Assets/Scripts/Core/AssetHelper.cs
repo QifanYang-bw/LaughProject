@@ -31,7 +31,7 @@ namespace Assets.Scripts {
         public GameObject Ball;
         public GameObject LevelCanvas;
         public List<Material> BackgroundMaterials;
-        public GameObject WavePrefab { get; private set; }
+        public GameObject WavePrefab;
 
         public List<string> TutorialSceneNames = new List<string>
         {

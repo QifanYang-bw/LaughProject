@@ -2,10 +2,29 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
 
 public class Wall : MonoBehaviour {
     public SegmentModel seg;
+
+    public enum WallTypes
+    {
+        Normal,
+        Silent,
+        Enhance,
+        Glass,
+        BrokenGlass,
+        Shattered,
+    }
+    public WallTypes Type;
+    // enhance
+    public float EnhanceStrength = 2.0f;
+    // glass
+    public float ReduceStrength = 2.0f;
+    // glass
+    public float DestoryGlassLimitStrength = 3.0f;
+
 
     private void Awake() {
         float boardHalfLength = transform.lossyScale.x * .5f;
@@ -22,4 +41,64 @@ public class Wall : MonoBehaviour {
 
     }
 
+    public void OnVoiceWaveHit(VoiceWave voiceWave)
+    {
+        var nextType = GetNextType(voiceWave);
+        // update wave
+        UpdateWaveByType(voiceWave);
+        UpdateType(nextType);
+    }
+
+    private WallTypes GetNextType(VoiceWave voiceWave)
+    {
+        switch (Type)
+        {
+            case WallTypes.Glass:
+                if (voiceWave.RuntimeStrength > DestoryGlassLimitStrength)
+                {
+                    return WallTypes.Shattered;
+                }
+                else
+                {
+                    return WallTypes.BrokenGlass;
+                }
+                break;
+            case WallTypes.BrokenGlass:
+                return WallTypes.Shattered;
+                break;
+            default:
+                return Type;
+        }
+    }
+
+    private void UpdateWaveByType(VoiceWave voiceWave)
+    {
+        switch (Type)
+        {
+            case WallTypes.Normal:
+                break;
+            case WallTypes.Silent:
+                voiceWave.RuntimeStrength = 0;
+                break;
+            case WallTypes.Enhance:
+                voiceWave.RuntimeStrength += EnhanceStrength;
+                break;
+            case WallTypes.Glass:
+                voiceWave.RuntimeStrength -= ReduceStrength;
+                break;
+            case WallTypes.BrokenGlass:
+                voiceWave.RuntimeStrength -= ReduceStrength;
+                break;
+            case WallTypes.Shattered:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    private void UpdateType(WallTypes type)
+    {
+        Type = type;
+        // todo lwttai update ui
+    }
 }
