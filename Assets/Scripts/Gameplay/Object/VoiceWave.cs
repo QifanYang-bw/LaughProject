@@ -100,8 +100,8 @@ public class VoiceWave : MonoBehaviour {
             if (collision) {
                 double newAngle = GeoLib.CalculateAngle(Arc.Center, collisionPoint);
                 double newAngleDelta = newAngle - Arc.Angle.StartAngle;
-                Debug.LogFormat("VoiceWave update Right angle: collisionPoint {0}, startAngle {1}, newAngle {2}, angle delta {3}",
-                                 collisionPoint, Arc.Angle.StartAngle, newAngle, newAngleDelta);
+                //Debug.LogFormat("VoiceWave update Right angle: collisionPoint {0}, startAngle {1}, newAngle {2}, angle delta {3}",
+                //                 collisionPoint, Arc.Angle.StartAngle, newAngle, newAngleDelta);
                 if (newAngleDelta < 0) {
                     Debug.LogAssertionFormat("VoiceWave update angle delta < 0: collisionPoint {0}, arc {1}, new Angle {2}, angle delta {3}",
                                               collisionPoint, Arc, newAngle, newAngleDelta);
@@ -110,8 +110,8 @@ public class VoiceWave : MonoBehaviour {
                 if (newAngleDelta > Math.PI) {
                     newAngleDelta = Math.PI * 2f - newAngleDelta;
                 }
-                Debug.LogFormat("VoiceWave update Chain newAngle {0} angleDelta {1} \r\n Arc {2}",
-                                 newAngle, newAngleDelta, Arc.Description());
+                //Debug.LogFormat("VoiceWave update Chain newAngle {0} angleDelta {1} \r\n Arc {2}",
+                //                 newAngle, newAngleDelta, Arc.Description());
                 RightLink.ChainAngle(newAngleDelta);
             } else {
                 RightLink.isBroken = true;
@@ -128,9 +128,6 @@ public class VoiceWave : MonoBehaviour {
             if (collision) {
                 double newAngle = GeoLib.CalculateAngle(Arc.Center, collisionPoint);
                 double newAngleDelta = Arc.Angle.EndAngle - newAngle;
-
-                GameObject circle = GameObject.Find("TestCircle");
-                circle.transform.position = collisionPoint;
 
                 if (newAngleDelta < 0) {
                     Debug.LogAssertionFormat("VoiceWave update angle delta < 0: collisionPoint {0}, arc {1}, new Angle {2}, angle delta {3}",

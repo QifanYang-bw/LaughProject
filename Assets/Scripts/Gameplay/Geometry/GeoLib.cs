@@ -59,7 +59,7 @@ public class GeoLib {
         double EndAngle = arc.Angle.EndAngle;
 
         bool res;
-        if (StartAngle < EndAngle) {
+        if (EndAngle - StartAngle >= -1e-6) {
             res = angle >= StartAngle && angle <= EndAngle;
         } else {
             // A 360 flip is included
@@ -67,7 +67,7 @@ public class GeoLib {
             double endAngleExt = EndAngle + Math.PI * 2f;
             res = angle >= StartAngle && angle <= endAngleExt || angleExt >= StartAngle && angleExt <= endAngleExt;
         }
-        // Debug.LogFormat("IsAngleWithinArc {0} StartAngle {1} EndAngle {2} angle {3}", res, StartAngle, EndAngle, angle);
+        Debug.LogFormat("IsAngleWithinArc {0} StartAngle {1} EndAngle {2} angle {3}", res, StartAngle, EndAngle, angle);
         return res;
     }
     public static bool IsSegmentWithinArc(ArcModel arc, SegmentModel seg) {
@@ -190,11 +190,15 @@ public class GeoLib {
         double pointADist = 0;
         if (pointACollision) {
             pointADist = Vector2.Distance(seg.PointA, arc.Center);
+            Debug.LogFormat("ArcCollisionRadiusWithSegment pointA Collision {0}, Angle {1}, point {2}, \r\n stAngle {3}, edAngle {4}",
+                            pointACollision, CalculateAngle(arc.Center, seg.PointA), seg.PointA, arc.Angle.StartAngle, arc.Angle.EndAngle);
         }
         bool pointBCollision = IsAngleWithinArc(arc, CalculateAngle(arc.Center, seg.PointB));
         double pointBDist = 0;
         if (pointBCollision) {
             pointBDist = Vector2.Distance(seg.PointB, arc.Center);
+            Debug.LogFormat("ArcCollisionRadiusWithSegment pointB Collision {0}, Angle {1}, point {2}, \r\n stAngle {3}, edAngle {4}",
+                             pointBCollision, CalculateAngle(arc.Center, seg.PointB), seg.PointB, arc.Angle.StartAngle, arc.Angle.EndAngle);
         }
 
         if (!rayACollision && !rayBCollision && !perpCollision && !pointACollision && !pointBCollision) {
@@ -226,7 +230,7 @@ public class GeoLib {
             point = seg.PointA;
         }
 
-        // Debug.LogFormat("ArcCollisionRadiusWithSegment res {0}, Dist {1}", true, dist);
+        Debug.LogFormat("ArcCollisionRadiusWithSegment res {0}, pos {1}, Dist {1}", true, point, dist);
         return (true, point, dist);
     }
 
@@ -274,50 +278,33 @@ public class GeoLib {
         return (true, reflectedRay);
     }
 
-    public static List<Vector2> FindCircleLineCollision(Vector2 circleCenter, float radius, Vector2 linePoint1, Vector2 linePoint2) {
+    public static List<Vector2> FindCircleLineCollision(Vector2 center, float radius, Vector2 p1, Vector2 p2) {
         List<Vector2> collisionPoints = new List<Vector2>();
+        float a, b, c;
+        float bb4ac;
+        float mu1;
+        float mu2;
 
-        // Calculate the vector from linePoint1 to linePoint2
-        Vector2 lineVector = linePoint2 - linePoint1;
-
-        // Calculate the vector from linePoint1 to the circle center
-        Vector2 circleVector = circleCenter - linePoint1;
-
-        // Project circleVector onto lineVector
-        float projectionFactor = Vector2.Dot(circleVector, lineVector) / lineVector.sqrMagnitude;
-        Vector2 projectionVector = projectionFactor * lineVector;
-
-        // Calculate the intersection point (closest point on the line segment to the circle center)
-        Vector2 intersectionPoint = linePoint1 + projectionVector;
-
-        // Clamp the intersection point to the line segment
-        float t = Mathf.Clamp01(projectionFactor);
-        Vector2 clampedIntersectionPoint = linePoint1 + t * lineVector;
-
-        // Calculate the distance between the clamped intersection point and the circle center
-        float distance = Vector2.Distance(clampedIntersectionPoint, circleCenter);
-
-        if (distance <= radius) {
-            // Calculate the distance from the clamped intersection point to the collision points
-            float collisionDistance = Mathf.Sqrt(radius * radius - distance * distance);
-
-            // Calculate the collision points
-            Vector2 collisionDirection = (collisionDistance / lineVector.magnitude) * lineVector;
-
-            // Check if the collision points lie on the line segment
-            Vector2 collisionPoint1 = clampedIntersectionPoint + collisionDirection;
-            if (IsPointOnLineSegment(collisionPoint1, linePoint1, linePoint2)) {
-                collisionPoints.Add(collisionPoint1);
-            }
-
-            if (collisionDistance > 0) {
-                Vector2 collisionPoint2 = clampedIntersectionPoint - collisionDirection;
-                if (IsPointOnLineSegment(collisionPoint2, linePoint1, linePoint2)) {
-                    collisionPoints.Add(collisionPoint2);
-                }
-            }
+        //  get the distance between X and Z on the segment
+        Vector2 dp = new Vector2();
+        dp.x = p2.x - p1.x;
+        dp.y = p2.y - p1.y;
+        //   I don't get the math here
+        a = dp.x * dp.x + dp.y * dp.y;
+        b = 2 * (dp.x * (p1.x - center.x) + dp.y * (p1.y - center.y));
+        c = center.x * center.x + center.y * center.y;
+        c += p1.x * p1.x + p1.y * p1.y;
+        c -= 2 * (center.x * p1.x + center.y * p1.y);
+        c -= radius * radius;
+        bb4ac = b * b - 4 * a * c;
+        if (Mathf.Abs(a) < float.Epsilon || bb4ac < 0) {
+            //  line does not intersect
+            return collisionPoints;
         }
-
+        mu1 = (-b + Mathf.Sqrt(bb4ac)) / (2 * a);
+        mu2 = (-b - Mathf.Sqrt(bb4ac)) / (2 * a);
+        collisionPoints.Add(new Vector2(p1.x + mu1 * (p2.x - p1.x), p1.y + mu1 * (p2.y - p1.y)));
+        collisionPoints.Add(new Vector2(p1.x + mu2 * (p2.x - p1.x), p1.y + mu2 * (p2.y - p1.y)));
         return collisionPoints;
     }
 
@@ -330,7 +317,6 @@ public class GeoLib {
         return point.x >= minX && point.x <= maxX && point.y >= minY && point.y <= maxY;
     }
 
-
     public static (bool, Vector2) FindOneArcSegmentCollision(ArcModel arc, SegmentModel seg) {
         List<Vector2> collisionPointList = GeoLib.FindCircleLineCollision(arc.Center, (float)arc.Radius, seg.PointA, seg.PointB);
         bool found = false;
@@ -338,7 +324,7 @@ public class GeoLib {
         if (collisionPointList.Count > 0) {
             foreach (Vector2 collisionCirclePoint in collisionPointList) {
                 double pointAngle = GeoLib.CalculateAngle(arc.Center, collisionCirclePoint);
-                if (GeoLib.IsAngleWithinArc(arc, pointAngle)) {
+                if (IsAngleWithinArc(arc, pointAngle) && IsPointOnLineSegment(collisionCirclePoint, seg.PointA, seg.PointB)) {
                     found = true;
                     collisionPoint = collisionCirclePoint;
                 }
