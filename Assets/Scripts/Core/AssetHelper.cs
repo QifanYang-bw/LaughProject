@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public enum MusicType {
@@ -30,6 +31,7 @@ namespace Assets.Scripts {
         public GameObject Ball;
         public GameObject LevelCanvas;
         public List<Material> BackgroundMaterials;
+        public GameObject WavePrefab { get; private set; }
 
         public List<string> TutorialSceneNames = new List<string>
         {
@@ -83,6 +85,7 @@ namespace Assets.Scripts {
 
         private void Awake() {
             instance = this;
+            WavePrefab = AssetDatabase.LoadAssetAtPath("Assets/Prefabs/VoiceWave.prefab", typeof(GameObject)) as GameObject;
         }
 
         public bool ShouldShowScoreBoard(string sceneName) {

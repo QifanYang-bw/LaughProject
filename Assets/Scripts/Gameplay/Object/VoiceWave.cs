@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Assets.Scripts.Gameplay.Model;
 using UnityEngine;
 
 public class VoiceWave : MonoBehaviour {
@@ -7,6 +8,7 @@ public class VoiceWave : MonoBehaviour {
 
     public ArcModel Arc;
     public ArcLinkModel LeftLink, RightLink;
+    public SoundTypes SoundType;
 
     public float maximumRadius = 10f;
     public float expansionSpeed = 1.0f;

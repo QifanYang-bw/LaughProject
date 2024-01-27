@@ -46,15 +46,50 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f748aaca0111f2845a459eeb32e14473, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  arc:
+  Arc:
     Center: {x: 0, y: 0}
     Radius: 0
     Angle:
       StartAngle: 0
-      EndAngle: 0
       AngleRange: 0
-  wall: {fileID: 0}
-  expansionSpeed: 1
+      EndAngle: 0
+  LeftLink:
+    LeftArc:
+      Center: {x: 0, y: 0}
+      Radius: 0
+      Angle:
+        StartAngle: 0
+        AngleRange: 0
+        EndAngle: 0
+    RightArc:
+      Center: {x: 0, y: 0}
+      Radius: 0
+      Angle:
+        StartAngle: 0
+        AngleRange: 0
+        EndAngle: 0
+    LeftStatus: 0
+    RightStatus: 0
+  RightLink:
+    LeftArc:
+      Center: {x: 0, y: 0}
+      Radius: 0
+      Angle:
+        StartAngle: 0
+        AngleRange: 0
+        EndAngle: 0
+    RightArc:
+      Center: {x: 0, y: 0}
+      Radius: 0
+      Angle:
+        StartAngle: 0
+        AngleRange: 0
+        EndAngle: 0
+    LeftStatus: 0
+    RightStatus: 0
+  maximumRadius: 10
+  expansionSpeed: 10
+  wallList: []
 --- !u!120 &9046606292534119214
 LineRenderer:
   serializedVersion: 2
@@ -178,6 +213,6 @@ MonoBehaviour:
     Radius: 0
     Angle:
       StartAngle: 0
-      EndAngle: 0
       AngleRange: 0
+      EndAngle: 0
   lineRenderer: {fileID: 0}

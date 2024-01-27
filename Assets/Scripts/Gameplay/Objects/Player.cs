@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Assets.Scripts;
+using Assets.Scripts.Gameplay.Model;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
@@ -11,7 +13,6 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _wavePrefab = AssetDatabase.LoadAssetAtPath("Assets/Prefabs/VoiceWave.prefab", typeof(GameObject));
     }
 
     // Update is called once per frame
@@ -40,10 +41,12 @@ public class Player : MonoBehaviour
     private void FireLaughWave()
     {
         Debug.Log("Fire wave");
-        GameObject wave = Instantiate(_wavePrefab, transform.parent) as GameObject;
+        GameObject wave = Instantiate(AssetHelper.instance.WavePrefab, transform.parent) as GameObject;
         wave.transform.parent = transform.parent;
         wave.transform.position = transform.position;
-        var arc = wave.GetComponent<VoiceWave>().Arc;
+        var voiceWave = wave.GetComponent<VoiceWave>();
+        voiceWave.SoundType = SoundTypes.Laugh;
+        var arc = voiceWave.Arc;
         arc.Center = transform.position;
         float degreeZ = transform.rotation.eulerAngles.z;
         degreeZ += 90;
@@ -108,5 +111,4 @@ public class Player : MonoBehaviour
     public float MoveSpeed = 30;
     public float WaveRangeDegree = 30;
     public GameObject AimAreaObj;
-    private Object _wavePrefab;
 }
