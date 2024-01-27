@@ -177,6 +177,13 @@ public class VoiceWave : MonoBehaviour {
             SegmentModel seg = model.Target.Seg;
             Debug.LogFormat("VoiceWave {0} enter collision model with seg {1}", gameObject.name, seg);
 
+            collisionWall.OnWaveWillCollide(this);
+            if (!collisionWall.ShouldSplitOnCollision(this)) {
+                Debug.LogFormat("VoiceWave {0} does not split with seg {1}", gameObject.name, seg);
+                collisionIndex++;
+                continue;
+            }
+
             RayModel startRay = new RayModel(Arc.Center, Arc.Angle.StartAngle);
             (bool isAvailable, RayModel reflectedRay) = GeoLib.FindReflectedRay(startRay, seg);
             if (!isAvailable) {
@@ -185,7 +192,6 @@ public class VoiceWave : MonoBehaviour {
                 continue;
             }
 
-            double collisionAngle = GeoLib.CalculateAngle(Arc.Center, model.collisionPoint);
             double reflectedCollisionAngle = GeoLib.CalculateAngle(reflectedRay.Origin, model.collisionPoint);
 
             ArcModel reflectedArc = new ArcModel(reflectedRay.Origin, Arc.Radius, reflectedCollisionAngle, 0f);
@@ -193,58 +199,61 @@ public class VoiceWave : MonoBehaviour {
             Debug.LogFormat("Arc ReflectedArc reflected. Arc {0}, \r\n Reflected {1}",
                              Arc.Description(), reflectedArc.Description());
 
-            if (collisionAngle > 0) {
-                if (GeoLib.isEqual(collisionAngle, Arc.Angle.StartAngle)) {
-                    ArcLinkModel linkModel = new ArcLinkModel();
-                    SetRightLink(linkModel);
-                    reflectedWave.SetRightLink(linkModel);
-                    linkModel.LeftArc = Arc;
-                    linkModel.RightArc = reflectedArc;
-                    linkModel.SetRightExpand();
-                    linkModel.Segment = collisionWall.Seg;
+            double collisionAngle = GeoLib.CalculateAngle(Arc.Center, model.collisionPoint);
+            bool shouldDestroy = false;
+            if (GeoLib.isEqual(collisionAngle, Arc.Angle.StartAngle)) {
+                ArcLinkModel linkModel = new ArcLinkModel();
+                SetRightLink(linkModel);
+                reflectedWave.SetRightLink(linkModel);
+                linkModel.LeftArc = Arc;
+                linkModel.RightArc = reflectedArc;
+                linkModel.SetRightExpand();
+                linkModel.Segment = collisionWall.Seg;
                     
-                    Debug.LogFormat("Arc ReflectedArc Right Link Created.");
-                    reflectedWave.gameObject.name = "RightReflected";
-                } else if (GeoLib.isEqual(collisionAngle, Arc.Angle.EndAngle)) {
-                    ArcLinkModel linkModel = new ArcLinkModel();
-                    SetLeftLink(linkModel);
-                    reflectedWave.SetLeftLink(linkModel);
-                    linkModel.LeftArc = reflectedArc;
-                    linkModel.RightArc = Arc;
-                    linkModel.SetLeftExpand();
-                    linkModel.Segment = collisionWall.Seg;
-                    Debug.LogFormat("Arc ReflectedArc Left Link Created.");
-                    reflectedWave.gameObject.name = "LeftReflected";
-                } else {
-                    ArcModel splitArcOne = new ArcModel(Arc.Center, Arc.Radius, Arc.Angle.StartAngle, collisionAngle - Arc.Angle.StartAngle);
-                    ArcModel splitArcTwo = new ArcModel(Arc.Center, Arc.Radius, collisionAngle, Arc.Angle.EndAngle - collisionAngle);
+                Debug.LogFormat("Arc ReflectedArc Right Link Created.");
+                reflectedWave.gameObject.name = "RightReflected";
+            } else if (GeoLib.isEqual(collisionAngle, Arc.Angle.EndAngle)) {
+                ArcLinkModel linkModel = new ArcLinkModel();
+                SetLeftLink(linkModel);
+                reflectedWave.SetLeftLink(linkModel);
+                linkModel.LeftArc = reflectedArc;
+                linkModel.RightArc = Arc;
+                linkModel.SetLeftExpand();
+                linkModel.Segment = collisionWall.Seg;
+                Debug.LogFormat("Arc ReflectedArc Left Link Created.");
+                reflectedWave.gameObject.name = "LeftReflected";
+            } else {
+                ArcModel splitArcOne = new ArcModel(Arc.Center, Arc.Radius, Arc.Angle.StartAngle, collisionAngle - Arc.Angle.StartAngle);
+                ArcModel splitArcTwo = new ArcModel(Arc.Center, Arc.Radius, collisionAngle, Arc.Angle.EndAngle - collisionAngle);
 
-                    ArcLinkModel twoLinkModel = new ArcLinkModel();
-                    VoiceWave splitWaveTwo = CreateWaveFromSelf(splitArcTwo, collisionWall);
-                    reflectedWave.SetRightLink(twoLinkModel);
-                    splitWaveTwo.SetRightLink(twoLinkModel);
-                    twoLinkModel.LeftArc = splitArcTwo;
-                    twoLinkModel.RightArc = reflectedArc;
-                    twoLinkModel.SetRightExpand();
-                    twoLinkModel.Segment = collisionWall.Seg;
+                ArcLinkModel twoLinkModel = new ArcLinkModel();
+                VoiceWave splitWaveTwo = CreateWaveFromSelf(splitArcTwo, collisionWall);
+                reflectedWave.SetRightLink(twoLinkModel);
+                splitWaveTwo.SetRightLink(twoLinkModel);
+                twoLinkModel.LeftArc = splitArcTwo;
+                twoLinkModel.RightArc = reflectedArc;
+                twoLinkModel.SetRightExpand();
+                twoLinkModel.Segment = collisionWall.Seg;
 
-                    ArcLinkModel oneLinkModel = new ArcLinkModel();
-                    VoiceWave splitWaveOne = CreateWaveFromSelf(splitArcOne, collisionWall);
-                    reflectedWave.SetLeftLink(oneLinkModel);
-                    splitWaveOne.SetLeftLink(oneLinkModel);
-                    oneLinkModel.LeftArc = reflectedArc;
-                    oneLinkModel.RightArc = splitArcOne;
-                    oneLinkModel.SetLeftExpand();
-                    oneLinkModel.Segment = collisionWall.Seg;
+                ArcLinkModel oneLinkModel = new ArcLinkModel();
+                VoiceWave splitWaveOne = CreateWaveFromSelf(splitArcOne, collisionWall);
+                reflectedWave.SetLeftLink(oneLinkModel);
+                splitWaveOne.SetLeftLink(oneLinkModel);
+                oneLinkModel.LeftArc = reflectedArc;
+                oneLinkModel.RightArc = splitArcOne;
+                oneLinkModel.SetLeftExpand();
+                oneLinkModel.Segment = collisionWall.Seg;
 
-                    Debug.LogFormat("Arc Splitted: Right {0}, \r\nLeft {1}.", splitArcTwo.Description(), splitArcOne.Description());
+                Debug.LogFormat("Arc Splitted: Right {0}, \r\nLeft {1}.", splitArcTwo.Description(), splitArcOne.Description());
 
-                    Debug.LogFormat("Arc twoLinkModel {0}", twoLinkModel.Description());
-                    Debug.LogFormat("Arc oneLinkModel {0}", oneLinkModel.Description());
-                    Debug.LogFormat("Arc ReflectedArc this {0} destroyed.", Arc.Description());
-                    Discard();
-                    return;
-                }
+                Debug.LogFormat("Arc twoLinkModel {0}", twoLinkModel.Description());
+                Debug.LogFormat("Arc oneLinkModel {0}", oneLinkModel.Description());
+                shouldDestroy = true;
+            }
+            collisionWall.OnWaveDidCollide(reflectedWave);
+            if (shouldDestroy) {
+                Debug.LogFormat("Arc ReflectedArc this {0} destroyed.", Arc.Description());
+                Discard();
             }
             collisionIndex++;
         }
