@@ -113,13 +113,13 @@ namespace Assets.Scripts {
         }
 
         public void ResetLevel() {
-            GravityManager.instance.ball.transform.parent = null;
+            /* GravityManager.instance.ball.transform.parent = null;
             Destroy(GravityManager.instance.ball.gameObject);
 
             GameObject ball = (GameObject)Instantiate(AssetHelper.instance.Ball, objectParent);
             ball.transform.position = GravityManager.instance.ballData.position;
             ball.GetComponent<Ball>().initialSpeed = GravityManager.instance.ballData.initialSpeed;
-            GravityManager.instance.ball = ball.GetComponent<Ball>();
+            GravityManager.instance.ball = ball.GetComponent<Ball>(); */
 
             OnLevelReset();
             if (GameManager.Instance.isEditorModeOn) {
