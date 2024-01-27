@@ -56,9 +56,7 @@ public class VoiceWave : MonoBehaviour {
 
         RuntimeStrength = InitialStrength;
         // copy a list for modify
-        if (LevelManager.instance != null) {
-            _npcList = new List<NPC>(LevelManager.instance.Npcs);
-        }
+        _npcList = LevelManager.instance != null ? new List<NPC>(LevelManager.instance.Npcs) : new List<NPC>(transform.parent.GetComponentsInChildren<NPC>());
 
         _microphoneList = new List<Microphone>(transform.parent.GetComponentsInChildren<Microphone>());
         Debug.Log($"microphoes:{_microphoneList.Count}");
