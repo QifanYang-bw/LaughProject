@@ -71,7 +71,6 @@ public class VoiceWave : MonoBehaviour {
     }
 
     private void Update() {
-        //Debug.LogFormat("VoiceWave {0} Update With Center {1}", gameObject.name, Arc.Center);
         if (LeftLink != null && LeftLink.isBroken) {
             LeftLink = null;
         }
@@ -144,6 +143,7 @@ public class VoiceWave : MonoBehaviour {
             }
         }
 
+        // Debug.LogFormat("VoiceWave {0} Update With Center {1}", gameObject.name, Arc.Center);
         if (collisionIndex >= collisionList.Count) {
             return;
         }
@@ -151,6 +151,7 @@ public class VoiceWave : MonoBehaviour {
             VoiceCollisionModel model = collisionList[collisionIndex];
             Wall collisionWall = model.Target;
             SegmentModel seg = model.Target.Seg;
+            Debug.LogFormat("VoiceWave {0} enter collision model with seg {1}", gameObject.name, seg);
 
             RayModel startRay = new RayModel(Arc.Center, Arc.Angle.StartAngle);
             (bool isAvailable, RayModel reflectedRay) = GeoLib.FindReflectedRay(startRay, seg);

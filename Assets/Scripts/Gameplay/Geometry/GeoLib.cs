@@ -173,32 +173,32 @@ public class GeoLib {
 
         RayModel rayA = new RayModel(arc.Center, arc.Angle.StartAngle);
         (bool rayACollision, double rayADist) = RayLineSegmentIntersection(rayA, seg);
-        // Debug.LogFormat("ArcCollisionRadiusWithSegment rayA Collision {0}, Dist {1}", rayACollision, rayADist);
+        //Debug.LogFormat("ArcCollisionRadiusWithSegment rayA Collision {0}, Dist {1}", rayACollision, rayADist);
         RayModel rayB = new RayModel(arc.Center, arc.Angle.EndAngle);
         (bool rayBCollision, double rayBDist) = RayLineSegmentIntersection(rayB, seg);
-        // Debug.LogFormat("ArcCollisionRadiusWithSegment rayB Collision {0}, Dist {1}", rayBCollision, rayBDist);
+        //Debug.LogFormat("ArcCollisionRadiusWithSegment rayB Collision {0}, Dist {1}", rayBCollision, rayBDist);
         (bool perpCollision, Vector2 perpIntersectPoint, double perpAngle, double perpDist) = PerpendicularIntersection(arc.Center, seg);
         if (perpCollision) {
             bool isPerpInSegment = IsAngleWithinArc(arc, perpAngle);
-            // Debug.LogFormat("ArcCollisionRadiusWithSegment perp Collision {0}, isWithin {1}, Angle {2}, Dist {3}", perpCollision, isPerpInSegment, perpAngle, perpDist);
+            //Debug.LogFormat("ArcCollisionRadiusWithSegment perp Collision {0}, isWithin {1}, Angle {2}, Dist {3}", perpCollision, isPerpInSegment, perpAngle, perpDist);
             perpCollision = perpCollision && isPerpInSegment;
         } else {
-            // Debug.LogFormat("ArcCollisionRadiusWithSegment perp Collision {0}, Angle{1}, Dist {2}", perpCollision, perpAngle, perpDist);
+            //Debug.LogFormat("ArcCollisionRadiusWithSegment perp Collision {0}, Angle{1}, Dist {2}", perpCollision, perpAngle, perpDist);
         }
         // The circumstance in which the segment's two endpoint become the point of contact
         bool pointACollision = IsAngleWithinArc(arc, CalculateAngle(arc.Center, seg.PointA));
         double pointADist = 0;
         if (pointACollision) {
             pointADist = Vector2.Distance(seg.PointA, arc.Center);
-            Debug.LogFormat("ArcCollisionRadiusWithSegment pointA Collision {0}, Angle {1}, point {2}, \r\n stAngle {3}, edAngle {4}",
-                            pointACollision, CalculateAngle(arc.Center, seg.PointA), seg.PointA, arc.Angle.StartAngle, arc.Angle.EndAngle);
+            //Debug.LogFormat("ArcCollisionRadiusWithSegment pointA Collision {0}, Angle {1}, point {2}, \r\n stAngle {3}, edAngle {4}",
+                            //pointACollision, CalculateAngle(arc.Center, seg.PointA), seg.PointA, arc.Angle.StartAngle, arc.Angle.EndAngle);
         }
         bool pointBCollision = IsAngleWithinArc(arc, CalculateAngle(arc.Center, seg.PointB));
         double pointBDist = 0;
         if (pointBCollision) {
             pointBDist = Vector2.Distance(seg.PointB, arc.Center);
-            Debug.LogFormat("ArcCollisionRadiusWithSegment pointB Collision {0}, Angle {1}, point {2}, \r\n stAngle {3}, edAngle {4}",
-                             pointBCollision, CalculateAngle(arc.Center, seg.PointB), seg.PointB, arc.Angle.StartAngle, arc.Angle.EndAngle);
+            //Debug.LogFormat("ArcCollisionRadiusWithSegment pointB Collision {0}, Angle {1}, point {2}, \r\n stAngle {3}, edAngle {4}",
+                             //pointBCollision, CalculateAngle(arc.Center, seg.PointB), seg.PointB, arc.Angle.StartAngle, arc.Angle.EndAngle);
         }
 
         if (!rayACollision && !rayBCollision && !perpCollision && !pointACollision && !pointBCollision) {
