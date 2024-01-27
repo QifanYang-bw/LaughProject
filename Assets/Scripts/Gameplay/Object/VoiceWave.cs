@@ -4,10 +4,6 @@ using Assets.Scripts;
 using Assets.Scripts.Gameplay.Model;
 using UnityEngine;
 using UnityEditor;
-using System.Drawing;
-using Unity.Burst.Intrinsics;
-using Assets.Scripts;
-using System.Runtime.CompilerServices;
 
 [Serializable]
 public class VoiceCollisionModel {
@@ -58,7 +54,10 @@ public class VoiceWave : MonoBehaviour {
 
         RuntimeStrength = InitialStrength;
         // copy a list for modify
-        _npcList = new List<NPC>(LevelManager.instance.Npcs);
+        if (LevelManager.instance != null) {
+            _npcList = new List<NPC>(LevelManager.instance.Npcs);
+        }
+
         _microphoneList = new List<Microphone>(transform.parent.GetComponentsInChildren<Microphone>());
         Debug.Log($"microphoes:{_microphoneList.Count}");
 

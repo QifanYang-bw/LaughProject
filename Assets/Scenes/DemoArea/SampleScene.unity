@@ -904,6 +904,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5826272125667549736, guid: 81fabb9f6205b934980770447ec12170,
         type: 3}
+      propertyPath: InitialStrength
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5826272125667549736, guid: 81fabb9f6205b934980770447ec12170,
+        type: 3}
       propertyPath: arc.Angle.EndAngle
       value: 7
       objectReference: {fileID: 0}
@@ -931,6 +936,11 @@ PrefabInstance:
         type: 3}
       propertyPath: arc.Angle.StartAngle
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5826272125667549736, guid: 81fabb9f6205b934980770447ec12170,
+        type: 3}
+      propertyPath: MinimumExpansionSpeed
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 5826272125667549736, guid: 81fabb9f6205b934980770447ec12170,
         type: 3}

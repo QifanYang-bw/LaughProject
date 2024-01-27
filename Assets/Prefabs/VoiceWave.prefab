@@ -54,6 +54,7 @@ MonoBehaviour:
       AngleRange: 0
       EndAngle: 0
   LeftLink:
+    isBroken: 0
     LeftArc:
       Center: {x: 0, y: 0}
       Radius: 0
@@ -68,9 +69,13 @@ MonoBehaviour:
         StartAngle: 0
         AngleRange: 0
         EndAngle: 0
+    Segment:
+      PointA: {x: 0, y: 0}
+      PointB: {x: 0, y: 0}
     LeftStatus: 0
     RightStatus: 0
   RightLink:
+    isBroken: 0
     LeftArc:
       Center: {x: 0, y: 0}
       Radius: 0
@@ -85,11 +90,22 @@ MonoBehaviour:
         StartAngle: 0
         AngleRange: 0
         EndAngle: 0
+    Segment:
+      PointA: {x: 0, y: 0}
+      PointB: {x: 0, y: 0}
     LeftStatus: 0
     RightStatus: 0
   SoundType: 0
-  maximumRadius: 10
-  expansionSpeed: 10
+  MaximumRadius: 10
+  collisionIndex: 0
+  collisionList: []
+  sourceWall: {fileID: 0}
+  MinimumExpansionSpeed: 1
+  ExpansionSpeed: 1
+  SpeedRatio: 1
+  InitialStrength: 1
+  RuntimeStrength: 1
+  StrengthRatio: 1
   wallList: []
 --- !u!120 &9046606292534119214
 LineRenderer:
