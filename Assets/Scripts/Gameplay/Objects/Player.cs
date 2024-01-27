@@ -43,7 +43,7 @@ public class Player : MonoBehaviour
         // todo impl this
         Debug.Log("Fire wave");
         GameObject wave = Instantiate(_wavePrefab, transform.position, transform.rotation) as GameObject;
-        var arc = wave.GetComponent<VoiceWave>().arc;
+        var arc = wave.GetComponent<VoiceWave>().Arc;
         arc.Center = transform.position;
         float angleZ = transform.rotation.eulerAngles.z;
         arc.Angle = new ArcAngleModel(angleZ - arc.Angle.AngleRange / 2, arc.Angle.AngleRange);
