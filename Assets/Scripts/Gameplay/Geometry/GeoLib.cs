@@ -2,7 +2,6 @@ using System;
 using Unity.Burst.Intrinsics;
 using UnityEditor.VersionControl;
 using UnityEngine;
-using static UnityEditor.Timeline.TimelinePlaybackControls;
 
 public class GeoLib {
     public static double DotProduct(Vector2 a, Vector2 b) {
@@ -45,6 +44,9 @@ public class GeoLib {
     public static double ConvertRadiansToDegrees(double radians) {
         return radians * (180.0 / Math.PI);
     }
+    public static double ConvertDegreesToRadians(double radians) {
+        return radians * (Math.PI * 2) / 360.0;
+    }
     public static bool IsAngleWithinArc(ArcModel arc, double angle) {
         double StartAngle = arc.Angle.StartAngle;
         double EndAngle = arc.Angle.EndAngle;
@@ -84,7 +86,7 @@ public class GeoLib {
         // Debug.LogFormat("IsSegmentWithinArc segA {0} segB {1} arcA {2} arcB {3}", segAAngle, segBAngle, StartAngle, EndAngle);
         bool res;
         res = segAAngle >= StartAngle && segAAngle <= EndAngle || segBAngle >= StartAngle && segBAngle <= EndAngle ||
-              segAAngle <= StartAngle && segBAngle >= EndAngle || segAAngle >= StartAngle && segBAngle >= EndAngle;
+              segAAngle <= StartAngle && segBAngle >= EndAngle;
         if (EndAngle > Math.PI * 2f) {
             segAAngle += Math.PI * 2f;
             segBAngle += Math.PI * 2f;
@@ -155,8 +157,10 @@ public class GeoLib {
         }
     }
     public static (bool, double) ArcCollisionRadiusWithSegment(ArcModel arc, SegmentModel seg) {
+        Debug.LogFormat("ArcCollisionRadiusWithSegment seg {0}, arc {1}", seg.Description(), arc.Description());
         bool inArc = IsSegmentWithinArc(arc, seg);
         if (!inArc) {
+            Debug.LogFormat("ArcCollisionRadiusWithSegment res False");
             return (false, double.PositiveInfinity);
         }
 
@@ -164,7 +168,6 @@ public class GeoLib {
         (bool rayACollision, double rayADist) = RayLineSegmentIntersection(rayA, seg);
         // Debug.LogFormat("ArcCollisionRadiusWithSegment rayA Collision {0}, Dist {1}", rayACollision, rayADist);
         RayModel rayB = new RayModel(arc.Center, arc.Angle.EndAngle);
-        // Debug.LogFormat("ArcCollisionRadiusWithSegment arc {0}, rayB {1}", arc.Description(), rayB.Description());
         (bool rayBCollision, double rayBDist) = RayLineSegmentIntersection(rayB, seg);
         // Debug.LogFormat("ArcCollisionRadiusWithSegment rayB Collision {0}, Dist {1}", rayBCollision, rayBDist);
         (bool perpCollision, double perpAngle, double perpDist) = PerpendicularIntersection(arc.Center, seg);
@@ -175,7 +178,6 @@ public class GeoLib {
         } else {
             // Debug.LogFormat("ArcCollisionRadiusWithSegment perp Collision {0}, Angle{1}, Dist {2}", perpCollision, perpAngle, perpDist);
         }
-        // Debug.LogFormat("ArcCollisionRadiusWithSegment perp Collision {0}, Angle{1}, Dist {2}", perpCollision, perpAngle, perpDist);
 
         if (!rayACollision && !rayBCollision && !perpCollision) {
             Debug.LogAssertionFormat("ArcCollisionRadiusWithSegment pass check but point non found: arc {0}, seg {1}", arc, seg);
@@ -192,8 +194,52 @@ public class GeoLib {
         if (perpCollision && perpDist < dist) {
             dist = perpDist;
         }
+        Debug.LogFormat("ArcCollisionRadiusWithSegment res {0}, Dist {1}", true, dist);
 
         return (true, dist);
     }
 
+    public static (bool, Vector2) FindReflectionPoint(Vector2 point, SegmentModel seg) {
+        // Calculate the vector from linePoint1 to linePoint2
+        Vector2 lineVector = seg.PointB - seg.PointA;
+        if (Math.Abs(lineVector.sqrMagnitude) < 1e-5) {
+            return (false, Vector2.zero);
+        }
+        // Calculate the vector from linePoint1 to the point
+        Vector2 pointVector = point - seg.PointA;
+
+        // Project pointVector onto lineVector
+        float projectionFactor = Vector2.Dot(pointVector, lineVector) / lineVector.sqrMagnitude;
+        Vector2 projectionVector = projectionFactor * lineVector;
+
+        // Calculate the vector from the point to the intersection point
+        Vector2 intersectionVector = projectionVector - pointVector;
+
+        // Calculate the reflection point
+        Vector2 reflectedPoint = point + 2 * intersectionVector;
+
+        return (true, reflectedPoint);
+    }
+    public static (bool, RayModel) FindReflectedRay(RayModel ray, SegmentModel seg) {
+        // Find the reflection of the ray's origin
+        (bool isAvailable, Vector2 reflectedOrigin) = FindReflectionPoint(ray.Origin, seg);
+        if (!isAvailable) {
+            return (false, ray);
+        }
+
+        // Calculate the normal vector of the line segment
+        Vector2 lineVector = seg.PointB - seg.PointA;
+        Vector2 normal = new Vector2(-lineVector.y, lineVector.x).normalized;
+
+        // Calculate the incident vector
+        Vector2 incident = new Vector2((float)Math.Cos(ray.Direction), (float)Math.Sin(ray.Direction));
+
+        // Calculate the reflected direction using the formula: R = I - 2 * dot(I, N) * N
+        Vector2 reflectedDirectionVector = incident - 2 * Vector2.Dot(incident, normal) * normal;
+        double reflectedDirection = Math.Atan2(reflectedDirectionVector.y, reflectedDirectionVector.x);
+
+        // Create the reflected ray
+        RayModel reflectedRay = new RayModel(reflectedOrigin, reflectedDirection);
+        return (true, reflectedRay);
+    }
 }

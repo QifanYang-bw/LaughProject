@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5568639466003884350}
   - component: {fileID: 509221839104449696}
   - component: {fileID: 7817003758326045075}
+  - component: {fileID: 1026519526499869694}
   m_Layer: 0
   m_Name: TempWall
   m_TagString: Untagged
@@ -74,7 +75,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6,
+    type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -98,5 +100,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   seg:
-    Point1: {x: 0, y: 0}
-    Point2: {x: 0, y: 0}
+    PointA: {x: 0, y: 0}
+    PointB: {x: 0, y: 0}
+--- !u!114 &1026519526499869694
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8870746717138188904}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abcb638c9d8ec58459b13a1489b43763, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  seg:
+    PointA: {x: 0, y: 0}
+    PointB: {x: 0, y: 0}
