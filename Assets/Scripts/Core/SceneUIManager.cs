@@ -46,17 +46,15 @@ namespace Assets.Scripts {
         public void SwitchBulletTimeEffect(bool isEnabled) {
         }
 
-        public void UpdatePanelMainStrokeData(LevelScoreModel model) {
-        }
-
         public void RefreshCanvas() {
             _pnlMain.gameObject.SetActive(true);
 
-            _viewScreen.gameObject.SetActive(true);
+            _btnPlay.gameObject.SetActive(false); // True
+            _viewScreen.gameObject.SetActive(false); // False
+
             _viewScreen.isOnClickContinueEnabled = true;
             _pnlScore.gameObject.SetActive(false);
             _pnlMenu.gameObject.SetActive(false);
-            _btnPlay.gameObject.SetActive(true);
             _pnlConfig.gameObject.SetActive(false);
             _pnlTotalScore.gameObject.SetActive(false);
 

@@ -19,51 +19,52 @@ public class VoiceCollisionModel {
 }
 
 public class VoiceWave : MonoBehaviour {
-    private GameObject wavePrefab;
-
+    [NonSerialized]
     private VoiceWaveLineRendererEx rendererEx;
 
     public ArcModel Arc;
-    public ArcLinkModel LeftLink, RightLink;
     public SoundTypes SoundType;
 
     public float MaximumRadius = 10f;
     public int collisionIndex;
-    public List<VoiceCollisionModel> collisionList;
     public Wall sourceWall;
 
     public float MinimumExpansionSpeed = 1.0f;
-    [Header("Runtime Variables")]
-    public float ExpansionSpeed = 1.0f;
     public float SpeedRatio = 1.0f;
 
     public float InitialStrength = 10;
-    [Header("Runtime Variables")]
-    public float RuntimeStrength = 10;
     // strength value per sec
     public float StrengthRatio = 1.0f;
 
     public bool isHidden;
 
+    [Header("Runtime Variables")]
+    public float ExpansionSpeed = 1.0f;
+    public float RuntimeStrength = 10;
+
     // Debug Vars
+    [SerializeField]
+    private List<VoiceCollisionModel> _collisionList;
+    [SerializeField]
     private List<NPC> _npcList;
+    [SerializeField]
     private List<Microphone> _microphoneList;
+
+    public ArcLinkModel LeftLink, RightLink;
 
     private void Start() {
         Arc.Center = transform.position;
         Arc.Load();
 
         RuntimeStrength = InitialStrength;
-        // copy a list for modify
-        _npcList = LevelManager.instance != null ? new List<NPC>(LevelManager.instance.Npcs) : new List<NPC>(transform.parent.GetComponentsInChildren<NPC>());
-
-        _microphoneList = new List<Microphone>(transform.parent.GetComponentsInChildren<Microphone>());
-        Debug.LogFormat("Microphones: {0}", _microphoneList.Count);
+        // Copy a list for modify
+        _npcList = LevelManager.instance != null ? new List<NPC>(LevelManager.instance.NpcList) :
+                                            new List<NPC>(transform.parent.GetComponentsInChildren<NPC>());
+        _microphoneList = LevelManager.instance != null ? new List<Microphone>(LevelManager.instance.MicrophoneList) :
+                          new List<Microphone>(transform.parent.GetComponentsInChildren<Microphone>());
 
         rendererEx = GetComponent<VoiceWaveLineRendererEx>();
         rendererEx.arc = Arc;
-
-        wavePrefab = (GameObject)AssetDatabase.LoadAssetAtPath("Assets/Prefabs/VoiceWave.prefab", typeof(GameObject));
 
         ExamineCollision();
     }
@@ -72,7 +73,8 @@ public class VoiceWave : MonoBehaviour {
         if (!LevelManager.instance) {
             return;
         }
-        foreach (Wall wall in LevelManager.instance.wallList) {
+        _collisionList.Clear();
+        foreach (Wall wall in LevelManager.instance.WallList) {
             // Check whether the wall is the source it comes from
             if (wall == sourceWall || wall == null) {
                 continue;
@@ -85,15 +87,14 @@ public class VoiceWave : MonoBehaviour {
             }
             // A collision will happen in the future, at least for now
             VoiceCollisionModel model = new VoiceCollisionModel(radius, wall, collisionPoint);
-            collisionList.Add(model);
+            _collisionList.Add(model);
         }
-        collisionList.Sort((p1, p2) => p1.Radius.CompareTo(p2.Radius));
+        _collisionList.Sort((p1, p2) => p1.Radius.CompareTo(p2.Radius));
         collisionIndex = 0;
     }
 
     private void Update() {
-        UpdateStrength();
-        UpdateSpeed();
+        UpdateParams();
 
         if (LeftLink != null && LeftLink.isBroken) {
             LeftLink = null;
@@ -111,13 +112,16 @@ public class VoiceWave : MonoBehaviour {
             Discard();
             return;
         }
+
         double beforeRadius = Arc.Radius;
         Expand(Time.deltaTime * ExpansionSpeed);
-        if (RightLink == null) {
+        double afterRadius = Arc.Radius;
+
+        /*if (RightLink == null) {
             Debug.LogFormat("VoiceWave RightLink is null");
         } else {
             Debug.LogFormat("VoiceWave RightLink.ArcStatus {0}", RightLink.ArcStatus(Arc));
-        }
+        }*/
         if (RightLink != null && RightLink.ArcStatus(Arc) == ArcEndPointStatus.ArcEndPointStatusShrinking) {
             (bool collision, Vector2 collisionPoint) = GeoLib.FindOneArcSegmentCollision(Arc, RightLink.Segment);
             if (collision) {
@@ -141,11 +145,11 @@ public class VoiceWave : MonoBehaviour {
                 RightLink = null;
             }
         }
-        if (LeftLink == null) {
+        /*if (LeftLink == null) {
             Debug.LogFormat("VoiceWave LeftLink is null");
         } else {
             Debug.LogFormat("VoiceWave LeftLink.ArcStatus {0}", LeftLink.ArcStatus(Arc));
-        }
+        }*/
         if (LeftLink != null && LeftLink.ArcStatus(Arc) == ArcEndPointStatus.ArcEndPointStatusShrinking) {
             (bool collision, Vector2 collisionPoint) = GeoLib.FindOneArcSegmentCollision(Arc, LeftLink.Segment);
             if (collision) {
@@ -168,11 +172,8 @@ public class VoiceWave : MonoBehaviour {
         }
 
         // Debug.LogFormat("VoiceWave {0} Update With Center {1}", gameObject.name, Arc.Center);
-        if (collisionIndex >= collisionList.Count) {
-            return;
-        }
-        while (collisionIndex < collisionList.Count && Arc.Radius > collisionList[collisionIndex].Radius) {
-            VoiceCollisionModel model = collisionList[collisionIndex];
+        while (collisionIndex < _collisionList.Count && Arc.Radius > _collisionList[collisionIndex].Radius) {
+            VoiceCollisionModel model = _collisionList[collisionIndex];
             Wall collisionWall = model.Target;
             SegmentModel seg = model.Target.Seg;
             Debug.LogFormat("VoiceWave {0} enter collision model with seg {1}", gameObject.name, seg);
@@ -258,57 +259,48 @@ public class VoiceWave : MonoBehaviour {
             collisionIndex++;
         }
 
-        ExamineMicrophoneCollision();
-        ExamineNpcCollision();
+        ExamineMicrophoneCollision(beforeRadius, afterRadius);
+        ExamineNpcCollision(beforeRadius, afterRadius);
 
         if (RuntimeStrength <= 0)
             Destroy(gameObject);
     }
 
-    private void ExamineMicrophoneCollision()
-    {
+    private void ExamineMicrophoneCollision(double beforeRadius, double afterRadius) {
         if (_microphoneList.Count == 0)
             return;
-        List<Microphone> needRemoved = new List<Microphone>();
-        foreach (var microphone in _microphoneList)
-        {
-            if (!Arc.IsPointInsideArcRange(microphone.transform.position))
-            {
-                Debug.Log($"ExamineMicrophoneCollision microphone not in range {microphone.transform.position}");
-                needRemoved.Add(microphone);
+        List<Microphone> hitList = new List<Microphone>();
+        foreach (Microphone microphone in _microphoneList) {
+            (bool collision, double dist) = GeoLib.FindPointArcCollision(microphone.transform.position, Arc);
+            if (!collision) {
                 continue;
             }
-
-            if (!Arc.IsContainPoint(microphone.transform.position))
-                continue;
-            Debug.Log("ExamineMicrophoneCollision hit microphone");
-            microphone.OnVoiceWaveHit(this);
-            needRemoved.Add(microphone);
+            if (dist - beforeRadius > -1e-5  && afterRadius - dist > -1e-5) {
+                Debug.LogFormat("ExamineMicrophoneCollision hit microphone {0}", microphone.gameObject.name);
+                microphone.OnVoiceWaveHit(this);
+                hitList.Add(microphone);
+            }
         }
-
-        _microphoneList.RemoveAll(item => needRemoved.Contains(item));
+        _microphoneList.RemoveAll(item => hitList.Contains(item));
     }
 
-    private void ExamineNpcCollision()
-    {
+    private void ExamineNpcCollision(double beforeRadius, double afterRadius) {
         if (_npcList.Count == 0)
             return;
-        List<NPC> needRemoved = new List<NPC>();
-        foreach (var npc in _npcList)
-        {
-            if (!Arc.IsPointInsideArcRange(npc.transform.position))
-            {
-                needRemoved.Add(npc);
+        List<NPC> hitList = new List<NPC>();
+        foreach (NPC npc in _npcList) {
+            (bool collision, double dist) = GeoLib.FindPointArcCollision(npc.transform.position, Arc);
+            //Debug.LogFormat("ExamineNpcCollision hit npc {0} res {1} dist {2}", npc.gameObject.name, collision, dist);
+            if (!collision) {
                 continue;
             }
-
-            if (!Arc.IsContainPoint(npc.transform.position))
-                continue;
-            npc.OnVoiceWaveHit(this);
-            needRemoved.Add(npc);
+            if (dist - beforeRadius > -1e-5 && afterRadius - dist > -1e-5) {
+                Debug.LogFormat("ExamineNpcCollision hit npc {0}", npc.gameObject.name);
+                npc.OnVoiceWaveHit(this);
+                hitList.Add(npc);
+            }
         }
-
-        _npcList.RemoveAll(item => needRemoved.Contains(item));
+        _npcList.RemoveAll(item => hitList.Contains(item));
     }
 
     public bool IsRemovable() {
@@ -347,7 +339,7 @@ public class VoiceWave : MonoBehaviour {
     }
 
     public VoiceWave CreateWaveFromSelf(ArcModel newArc, Wall collisionWall) {
-        GameObject newWaveObject = Instantiate(wavePrefab, transform.parent);
+        GameObject newWaveObject = Instantiate(AssetHelper.instance.WavePrefab, transform.parent);
         VoiceWave newWave = newWaveObject.GetComponent<VoiceWave>();
         newWave.transform.position = newArc.Center;
         newWave.Arc = newArc;
@@ -379,13 +371,9 @@ public class VoiceWave : MonoBehaviour {
 #endif
     }
 
-    private void UpdateSpeed()
-    {
-        ExpansionSpeed = Math.Max(MinimumExpansionSpeed, RuntimeStrength * SpeedRatio);
-    }
-
-    private void UpdateStrength()
+    private void UpdateParams()
     {
         RuntimeStrength -= Time.deltaTime * StrengthRatio;
+        ExpansionSpeed = Math.Max(MinimumExpansionSpeed, RuntimeStrength * SpeedRatio);
     }
 }

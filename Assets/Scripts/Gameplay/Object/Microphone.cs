@@ -20,11 +20,11 @@ public class Microphone : MonoBehaviour
     public void OnVoiceWaveHit(VoiceWave voiceWave)
     {
         Debug.Log("microphone OnVoiceWaveHit");
-        OnTriggerd();
+        OnTrigger();
     }
 
 
-    private void OnTriggerd()
+    private void OnTrigger()
     {
         foreach (var speaker in RelatedSpeakerList)
         {

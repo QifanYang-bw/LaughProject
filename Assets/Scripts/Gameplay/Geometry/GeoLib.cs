@@ -59,15 +59,19 @@ public class GeoLib {
         double EndAngle = arc.Angle.EndAngle;
 
         bool res;
-        if (EndAngle - StartAngle >= -1e-6) {
-            res = angle >= StartAngle && angle <= EndAngle;
+        if (Math.Abs(Math.PI * 2f - arc.Angle.AngleRange) < 1e-6) {
+            res = true;
         } else {
-            // A 360 flip is included
-            double angleExt = angle + Math.PI * 2f;
-            double endAngleExt = EndAngle + Math.PI * 2f;
-            res = angle >= StartAngle && angle <= endAngleExt || angleExt >= StartAngle && angleExt <= endAngleExt;
+            if (EndAngle - StartAngle >= -1e-6) {
+                res = angle >= StartAngle && angle <= EndAngle;
+            } else {
+                // A 360 flip is included
+                double angleExt = angle + Math.PI * 2f;
+                double endAngleExt = EndAngle + Math.PI * 2f;
+                res = angle >= StartAngle && angle <= endAngleExt || angleExt >= StartAngle && angleExt <= endAngleExt;
+            }
         }
-        Debug.LogFormat("IsAngleWithinArc {0} StartAngle {1} EndAngle {2} angle {3}", res, StartAngle, EndAngle, angle);
+        // Debug.LogFormat("IsAngleWithinArc {0} StartAngle {1} EndAngle {2} angle {3}", res, StartAngle, EndAngle, angle);
         return res;
     }
     public static bool IsSegmentWithinArc(ArcModel arc, SegmentModel seg) {
@@ -333,4 +337,16 @@ public class GeoLib {
         return (found, collisionPoint);
     }
 
+    public static bool isPointWithinArc(Vector2 point, ArcModel arc) {
+        double pointAngle = GeoLib.CalculateAngle(arc.Center, point);
+        return IsAngleWithinArc(arc, pointAngle);
+    }
+
+    public static (bool, double) FindPointArcCollision(Vector2 point, ArcModel arc) {
+        if (isPointWithinArc(point, arc)) {
+            return (true, Math.Sqrt(SquaredDistance(arc.Center, point)));
+        } else {
+            return (false, double.PositiveInfinity);
+        }
+    }
 }

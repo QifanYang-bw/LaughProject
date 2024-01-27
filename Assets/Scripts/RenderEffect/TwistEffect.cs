@@ -2,8 +2,6 @@
 using UnityEngine;
 
 public class TwistEffect : PostEffectsBase {
-    private float _wellStrengthMultiplier = 2f;
-
     private bool _isTwisting;
     private float _startTime;
     private float _twistStrength;

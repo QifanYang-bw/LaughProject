@@ -84,7 +84,6 @@ namespace Assets.Scripts {
 
         private void Awake() {
             instance = this;
-            WavePrefab = AssetDatabase.LoadAssetAtPath("Assets/Prefabs/VoiceWave.prefab", typeof(GameObject)) as GameObject;
         }
 
         public bool ShouldShowScoreBoard(string sceneName) {

@@ -11,8 +11,6 @@ namespace Assets.Scripts {
         public static LevelManager instance;
 
         public bool isPaused = false;
-        public Animator FullGoldAnimator;
-        public SpriteRenderer PatternSprite;
 
         [Header("Runtime Variables")]
         public Transform objectParent;
@@ -21,12 +19,9 @@ namespace Assets.Scripts {
 
         public event Action OnLevelReset;
 
-        // The following properties should belong to effectManager
-        public TwistEffect twistEffect;
-        public BlurEffect blurEffect;
-
-        public List<Wall> wallList;
-        public List<NPC> Npcs;
+        public List<Wall> WallList;
+        public List<NPC> NpcList;
+        public List<Microphone> MicrophoneList;
 
         private void Awake() {
             instance = this;
@@ -34,16 +29,19 @@ namespace Assets.Scripts {
 
         private void Start() {
             Camera mainCamera = Camera.main;
-            twistEffect = mainCamera.gameObject.AddComponent<TwistEffect>();
-            blurEffect = mainCamera.gameObject.AddComponent<BlurEffect>();
             objectParent = GameObject.Find("Objects")?.transform;
+            if (objectParent == null) {
+                Debug.Break();
+                return;
+            }
 
-            if (objectParent != null)
-                Npcs.AddRange(objectParent.GetComponentsInChildren<NPC>());
-            foreach (var npc in Npcs)
-            {
+            NpcList.AddRange(objectParent.GetComponentsInChildren<NPC>());
+            foreach (var npc in NpcList) {
                 npc.OnMoodChangEvent += CheckAllNpcLaugh;
             }
+            MicrophoneList.AddRange(objectParent.GetComponentsInChildren<Microphone>());
+
+            Debug.LogFormat("LevelManager Microphones: {0}, NPCs: {1}", MicrophoneList.Count, NpcList.Count);
 
             curElapsedTime = Time.time;
             if (GameManager.Instance.UserDataModel.levelScoreDict.ContainsKey(GameManager.Instance.currentLevelName())) {
@@ -51,11 +49,6 @@ namespace Assets.Scripts {
             } else {
                 previousScoreModel = LevelScoreModel.EmptyScore();
             }
-            if (FullGoldAnimator != null) {
-                FullGoldAnimator.gameObject.SetActive(false);
-            }
-            ResetAnimator();
-            OnLevelReset += ResetAnimator;
 
             if (null != SceneUIManager.Instance) {
                 SceneUIManager.Instance.OnRetryLevel += ResetLevel;
@@ -81,7 +74,7 @@ namespace Assets.Scripts {
             if (wall == null) {
                 return;
             }
-            wallList.Add(wall);
+            WallList.Add(wall);
         }
 
         public void Pass() {
@@ -100,9 +93,6 @@ namespace Assets.Scripts {
             }
             isPaused = true;
             Time.timeScale = 0f;
-            if (FullGoldAnimator != null) {
-                FullGoldAnimator.speed = 0;
-            }
         }
 
         public void ResumeLevel() {
@@ -111,9 +101,6 @@ namespace Assets.Scripts {
             }
             isPaused = false;
             Time.timeScale = 1f;
-            if (FullGoldAnimator != null) {
-                FullGoldAnimator.speed = 1;
-            }
         }
 
         public void ResetLevel() {
@@ -134,13 +121,6 @@ namespace Assets.Scripts {
         }
 
         public void ResetAnimator() {
-            if (FullGoldAnimator != null) {
-                FullGoldAnimator.gameObject.SetActive(false);
-            }
-            SceneUIManager.Instance.UpdatePanelMainStrokeData(previousScoreModel);
-            if (PatternSprite != null) {
-                PatternSprite?.gameObject?.SetActive(!false);
-            }
         }
 
         public LevelScoreModel GetScore() {
@@ -151,7 +131,7 @@ namespace Assets.Scripts {
 
         private void CheckAllNpcLaugh()
         {
-            if (!Npcs.TrueForAll(npc => npc.IsLaughing))
+            if (!NpcList.TrueForAll(npc => npc.IsLaughing))
                 return;
             Debug.Log("level pass!");
             // todo lwttai
