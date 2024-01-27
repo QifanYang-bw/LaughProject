@@ -97,19 +97,23 @@ public class Wall : MonoBehaviour {
     }
 
     public void OnWaveWillCollide(VoiceWave wave) {
-
+        UpdateType(GetNextType(wave));
     }
 
-    public bool ShouldSplitOnCollision(VoiceWave wave) {
-        return true;
+    public bool ShouldSplitOnCollision(VoiceWave wave)
+    {
+        return Type != WallTypes.Shattered;
     }
 
     public void OnWaveDidCollide(VoiceWave wave) {
-        // TODO: Remove
-        var nextType = GetNextType(wave);
         // update wave
         UpdateWaveByType(wave);
-        UpdateType(nextType);
+
+        if (Type == WallTypes.Shattered)
+        {
+            Debug.Log("wall Shattered");
+            Destroy(gameObject);
+        }
     }
 
 }
