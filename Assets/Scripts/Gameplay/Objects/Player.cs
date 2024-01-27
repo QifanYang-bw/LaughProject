@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
+using UnityEditor;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -8,6 +9,7 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        _wavePrefab = AssetDatabase.LoadAssetAtPath("Assets/Prefabs/VoiceWave.prefab", typeof(GameObject));
     }
 
     // Update is called once per frame
@@ -40,6 +42,11 @@ public class Player : MonoBehaviour
     {
         // todo impl this
         Debug.Log("Fire wave");
+        GameObject wave = Instantiate(_wavePrefab, transform.position, transform.rotation) as GameObject;
+        var arc = wave.GetComponent<VoiceWave>().arc;
+        arc.Center = transform.position;
+        float angleZ = transform.rotation.eulerAngles.z;
+        arc.Angle = new ArcAngleModel(angleZ - arc.Angle.AngleRange / 2, arc.Angle.AngleRange);
     }
 
     private void UpdateAimAreaVisibility()
@@ -93,4 +100,5 @@ public class Player : MonoBehaviour
 
     public float MoveSpeed = 30;
     public GameObject AimAreaObj;
+    private Object _wavePrefab;
 }
