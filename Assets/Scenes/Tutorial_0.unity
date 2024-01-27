@@ -914,13 +914,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1464225171478873642, guid: 6d9a14b00ab0c3648807400e4deef8b6,
         type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1464225171478873642, guid: 6d9a14b00ab0c3648807400e4deef8b6,
+        type: 3}
       propertyPath: m_LocalPosition.x
-      value: -12.64
+      value: -11.53
       objectReference: {fileID: 0}
     - target: {fileID: 1464225171478873642, guid: 6d9a14b00ab0c3648807400e4deef8b6,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -3.69
+      value: 1.51
       objectReference: {fileID: 0}
     - target: {fileID: 1464225171478873642, guid: 6d9a14b00ab0c3648807400e4deef8b6,
         type: 3}
@@ -972,6 +977,12 @@ PrefabInstance:
       propertyPath: RelatedSpeakerList.Array.data[0]
       value: 
       objectReference: {fileID: 177738081}
+    - target: {fileID: 6554487817035529164, guid: 6d9a14b00ab0c3648807400e4deef8b6,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 0b7808a3ada88844ca876c34e7003603,
+        type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1126,15 +1137,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 394361965}
     m_Modifications:
+    - target: {fileID: 545153136193245622, guid: 34f54ef0c5587dc49a25a38a0d13cd0b,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 74cdb3906d6b38c4fafba72a508d3d6f,
+        type: 3}
     - target: {fileID: 2054644874384721788, guid: 34f54ef0c5587dc49a25a38a0d13cd0b,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 19.44
+      value: 22.31
       objectReference: {fileID: 0}
     - target: {fileID: 2054644874384721788, guid: 34f54ef0c5587dc49a25a38a0d13cd0b,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.54
+      value: 2.33
       objectReference: {fileID: 0}
     - target: {fileID: 2054644874384721788, guid: 34f54ef0c5587dc49a25a38a0d13cd0b,
         type: 3}
