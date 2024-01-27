@@ -60,10 +60,8 @@ public class Wall : MonoBehaviour {
                 {
                     return WallTypes.BrokenGlass;
                 }
-                break;
             case WallTypes.BrokenGlass:
                 return WallTypes.Shattered;
-                break;
             default:
                 return Type;
         }
