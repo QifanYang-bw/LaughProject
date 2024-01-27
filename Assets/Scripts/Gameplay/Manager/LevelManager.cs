@@ -66,15 +66,15 @@ namespace Assets.Scripts {
                 // 用于调试全收集动画
                 // totalGold = GetFullGoldCount() - 1;
             }
-            PauseLevel();
+            //PauseLevel();
         }
 
         private void Update() {
-            if (GameManager.Instance.state != GameState.Game || isPaused) {
+            //if (GameManager.Instance.state != GameState.Game || isPaused) {
                 // Not in game (e.g. ScoreBoard) or paused, disable keyboard Interactions
                 //Debug.LogFormat("[bullettime] {0} {1}", GameManager.Instance.state, isPaused);
-                return;
-            }
+            //    return;
+            //}
         }
 
         public void AddWall(Wall wall) {
@@ -147,12 +147,6 @@ namespace Assets.Scripts {
             return new LevelScoreModel(
                 Time.time - curElapsedTime
             );
-        }
-
-
-        public void OnPatternCollected() {
-            Debug.LogFormat("OnPatternCollected");
-            SceneUIManager.Instance.UpdatePanelMainStrokeData(GetScore());
         }
 
         private void CheckAllNpcLaugh()

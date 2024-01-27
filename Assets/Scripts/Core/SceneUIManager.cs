@@ -15,7 +15,6 @@ namespace Assets.Scripts {
         public event Action OnResumeLevel;
 
         public Transform _pnlMain;
-        public StrokePanel _pnlMainStroke;
         public Transform _pnlMenu;
         public Transform _btnLevelSelection;
         public CoverScreen _viewScreen;
@@ -48,12 +47,10 @@ namespace Assets.Scripts {
         }
 
         public void UpdatePanelMainStrokeData(LevelScoreModel model) {
-            _pnlMainStroke.UpdateLevelData(GameManager.Instance.currentLevelName(), model);
         }
 
         public void RefreshCanvas() {
             _pnlMain.gameObject.SetActive(true);
-            _pnlMainStroke.UpdateData(GameManager.Instance.UserDataModel);
 
             _viewScreen.gameObject.SetActive(true);
             _viewScreen.isOnClickContinueEnabled = true;

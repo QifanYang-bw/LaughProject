@@ -58,7 +58,7 @@ public class VoiceWave : MonoBehaviour {
         _npcList = LevelManager.instance != null ? new List<NPC>(LevelManager.instance.Npcs) : new List<NPC>(transform.parent.GetComponentsInChildren<NPC>());
 
         _microphoneList = new List<Microphone>(transform.parent.GetComponentsInChildren<Microphone>());
-        Debug.Log($"microphoes:{_microphoneList.Count}");
+        Debug.LogFormat("Microphones: {0}", _microphoneList.Count);
 
         rendererEx = GetComponent<VoiceWaveLineRendererEx>();
         rendererEx.arc = Arc;
