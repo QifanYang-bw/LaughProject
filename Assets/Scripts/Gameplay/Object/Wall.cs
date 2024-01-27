@@ -42,13 +42,6 @@ public class Wall : MonoBehaviour {
         //(bool rayCollision, double rayDist) = GeoLib.RayLineSegmentIntersection(rayModel, seg);
         //Debug.LogFormat("VoiceWave Awake RayLineSegmentIntersection {0} rayDist {1}", rayCollision, rayDist);
     }
-    public void OnVoiceWaveHit(VoiceWave voiceWave)
-    {
-        var nextType = GetNextType(voiceWave);
-        // update wave
-        UpdateWaveByType(voiceWave);
-        UpdateType(nextType);
-    }
 
     private WallTypes GetNextType(VoiceWave voiceWave)
     {
@@ -102,4 +95,23 @@ public class Wall : MonoBehaviour {
         Type = type;
         // todo lwttai update ui
     }
+
+    public void OnWaveWillCollide(VoiceWave wave) {
+
+    }
+
+    public bool ShouldSplitOnCollision(VoiceWave wave) {
+        return true;
+    }
+
+    public void OnWaveDidCollide(VoiceWave wave) {
+        // TODO: Remove
+        var nextType = GetNextType(wave);
+        // update wave
+        UpdateWaveByType(wave);
+        UpdateType(nextType);
+    }
+
 }
+
+

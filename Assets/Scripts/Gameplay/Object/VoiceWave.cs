@@ -43,6 +43,8 @@ public class VoiceWave : MonoBehaviour {
     // strength value per sec
     public float StrengthRatio = 1.0f;
 
+    public bool isHidden;
+
     // Debug Vars
     public List<Wall> wallList;
     private List<NPC> _npcList;
