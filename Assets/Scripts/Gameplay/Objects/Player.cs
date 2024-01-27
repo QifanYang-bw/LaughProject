@@ -1,8 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 public class Player : MonoBehaviour
 {
@@ -15,19 +17,16 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //var ratio = GetPosDeltaRatioByInput();
-        //transform.position += ratio * MoveSpeed * Time.deltaTime;
+        FaceMousePos();
+        TryHandleFireBtn();
+        UpdateAimAreaVisibility();
+        // add 45 degree for test icon
+        transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles + new Vector3(0, 0, 45));
     }
 
     void FixedUpdate()
     {
         MoveByInput();
-        FaceMousePos();
-        TryHandleFireBtn();
-        UpdateAimAreaVisibility();
-
-        // add 45 degree for test icon
-        transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles + new Vector3(0, 0, 45));
     }
 
     private void TryHandleFireBtn()
@@ -40,13 +39,16 @@ public class Player : MonoBehaviour
 
     private void FireLaughWave()
     {
-        // todo impl this
         Debug.Log("Fire wave");
-        GameObject wave = Instantiate(_wavePrefab, transform.position, transform.rotation) as GameObject;
+        GameObject wave = Instantiate(_wavePrefab, transform.parent) as GameObject;
+        wave.transform.parent = transform.parent;
+        wave.transform.position = transform.position;
         var arc = wave.GetComponent<VoiceWave>().Arc;
         arc.Center = transform.position;
-        float angleZ = transform.rotation.eulerAngles.z;
-        arc.Angle = new ArcAngleModel(angleZ - arc.Angle.AngleRange / 2, arc.Angle.AngleRange);
+        float degreeZ = transform.rotation.eulerAngles.z;
+        degreeZ += 90;
+        var angle = Degree2Angle(degreeZ);
+        arc.Angle = new ArcAngleModel(angle - Degree2Angle(WaveRangeDegree / 2), Degree2Angle(WaveRangeDegree));
     }
 
     private void UpdateAimAreaVisibility()
@@ -98,7 +100,13 @@ public class Player : MonoBehaviour
         return new Vector3(x, y, 0);
     }
 
+    private static double Degree2Angle(double degree)
+    {
+        return degree / 180f * Math.PI;
+    }
+
     public float MoveSpeed = 30;
+    public float WaveRangeDegree = 30;
     public GameObject AimAreaObj;
     private Object _wavePrefab;
 }
