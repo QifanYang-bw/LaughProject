@@ -4,6 +4,12 @@ using UnityEditor.VersionControl;
 using UnityEngine;
 
 public class GeoLib {
+    public static bool isEqual(double a, double b) {
+        return Math.Abs(a - b) < 1e-6;
+    }
+    public static bool isEqual(float a, float b) {
+        return Math.Abs(a - b) < 1e-6;
+    }
     public static double DotProduct(Vector2 a, Vector2 b) {
         return a.x * b.x + a.y * b.y;
     }
@@ -124,7 +130,7 @@ public class GeoLib {
 
         return (false, double.PositiveInfinity);
     }
-    public static (bool, double, double) PerpendicularIntersection(Vector2 p, SegmentModel seg) {
+    public static (bool, Vector2, double, double) PerpendicularIntersection(Vector2 p, SegmentModel seg) {
         // Calculate the directional vectors of the line segment
         double dx = seg.PointB.x - seg.PointA.x;
         double dy = seg.PointB.y - seg.PointA.y;
@@ -151,17 +157,17 @@ public class GeoLib {
             double angle = NormalizeAngle(Math.Atan2(dyp, dxp));
             // Debug.LogFormat("PerpendicularIntersection dxp {0}, dyp {1}, angle {2}", dxp, dyp, angle);
 
-            return (true, angle, distance);
+            return (true, intersection, angle, distance);
         } else {
-            return (false, 0, double.PositiveInfinity);
+            return (false, Vector2.zero, 0, double.PositiveInfinity);
         }
     }
-    public static (bool, double) ArcCollisionRadiusWithSegment(ArcModel arc, SegmentModel seg) {
-        Debug.LogFormat("ArcCollisionRadiusWithSegment seg {0}, arc {1}", seg.Description(), arc.Description());
+    public static (bool, Vector2, double) ArcCollisionRadiusWithSegment(ArcModel arc, SegmentModel seg) {
+        // Debug.LogFormat("ArcCollisionRadiusWithSegment seg {0}, arc {1}", seg.Description(), arc.Description());
         bool inArc = IsSegmentWithinArc(arc, seg);
         if (!inArc) {
-            Debug.LogFormat("ArcCollisionRadiusWithSegment res False");
-            return (false, double.PositiveInfinity);
+            // Debug.LogFormat("ArcCollisionRadiusWithSegment res False");
+            return (false, Vector2.zero, double.PositiveInfinity);
         }
 
         RayModel rayA = new RayModel(arc.Center, arc.Angle.StartAngle);
@@ -170,7 +176,7 @@ public class GeoLib {
         RayModel rayB = new RayModel(arc.Center, arc.Angle.EndAngle);
         (bool rayBCollision, double rayBDist) = RayLineSegmentIntersection(rayB, seg);
         // Debug.LogFormat("ArcCollisionRadiusWithSegment rayB Collision {0}, Dist {1}", rayBCollision, rayBDist);
-        (bool perpCollision, double perpAngle, double perpDist) = PerpendicularIntersection(arc.Center, seg);
+        (bool perpCollision, Vector2 perpIntersectPoint, double perpAngle, double perpDist) = PerpendicularIntersection(arc.Center, seg);
         if (perpCollision) {
             bool isPerpInSegment = IsAngleWithinArc(arc, perpAngle);
             // Debug.LogFormat("ArcCollisionRadiusWithSegment perp Collision {0}, isWithin {1}, Angle {2}, Dist {3}", perpCollision, isPerpInSegment, perpAngle, perpDist);
@@ -180,23 +186,30 @@ public class GeoLib {
         }
 
         if (!rayACollision && !rayBCollision && !perpCollision) {
-            Debug.LogAssertionFormat("ArcCollisionRadiusWithSegment pass check but point non found: arc {0}, seg {1}", arc, seg);
-            return (false, double.PositiveInfinity);
+            Debug.LogAssertionFormat("ArcCollisionRadiusWithSegment pass check but point non found: arc {0}, seg {1}", arc.Description(), seg.Description());
+            return (false, Vector2.zero, double.PositiveInfinity);
         }
+        // TODO: Collision Point may locate on the end of segments, check
 
         double dist = double.PositiveInfinity;
+        Vector2 point = Vector2.zero;
         if (rayACollision && rayADist < dist) {
             dist = rayADist;
+            Vector2 shiftVec = new Vector2((float)Math.Cos(rayA.Direction), (float)Math.Sin(rayA.Direction)) * (float)rayADist;
+            point = arc.Center + shiftVec;
         }
         if (rayBCollision && rayBDist < dist) {
             dist = rayBDist;
+            Vector2 shiftVec = new Vector2((float)Math.Cos(rayB.Direction), (float)Math.Sin(rayB.Direction)) * (float)rayBDist;
+            point = arc.Center + shiftVec;
         }
         if (perpCollision && perpDist < dist) {
             dist = perpDist;
+            point = perpIntersectPoint;
         }
-        Debug.LogFormat("ArcCollisionRadiusWithSegment res {0}, Dist {1}", true, dist);
 
-        return (true, dist);
+        // Debug.LogFormat("ArcCollisionRadiusWithSegment res {0}, Dist {1}", true, dist);
+        return (true, point, dist);
     }
 
     public static (bool, Vector2) FindReflectionPoint(Vector2 point, SegmentModel seg) {
