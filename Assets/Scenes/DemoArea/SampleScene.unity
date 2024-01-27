@@ -416,18 +416,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1972516952}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &396735779 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7817003758326045075, guid: 4801621f11017464281577ad8fa38a2b,
-    type: 3}
-  m_PrefabInstance: {fileID: 1972516952}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8acb40f3256026741a388438863016e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -604,16 +592,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1783800095}
     m_Modifications:
-    - target: {fileID: 8870746717138188904, guid: 4801621f11017464281577ad8fa38a2b,
-        type: 3}
-      propertyPath: m_Name
-      value: TempWall (1)
-      objectReference: {fileID: 0}
-    - target: {fileID: 8870746717138188904, guid: 4801621f11017464281577ad8fa38a2b,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 5568639466003884350, guid: 4801621f11017464281577ad8fa38a2b,
         type: 3}
       propertyPath: m_LocalScale.x
@@ -674,6 +652,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
       objectReference: {fileID: 0}
+    - target: {fileID: 8870746717138188904, guid: 4801621f11017464281577ad8fa38a2b,
+        type: 3}
+      propertyPath: m_Name
+      value: TempWall (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8870746717138188904, guid: 4801621f11017464281577ad8fa38a2b,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -685,18 +673,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 733210562}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &733210564 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7817003758326045075, guid: 4801621f11017464281577ad8fa38a2b,
-    type: 3}
-  m_PrefabInstance: {fileID: 733210562}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8acb40f3256026741a388438863016e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1106447130
 GameObject:
   m_ObjectHideFlags: 0
@@ -839,11 +815,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1783800095}
     m_Modifications:
-    - target: {fileID: 8870746717138188904, guid: 4801621f11017464281577ad8fa38a2b,
-        type: 3}
-      propertyPath: m_Name
-      value: TempWall
-      objectReference: {fileID: 0}
     - target: {fileID: 5568639466003884350, guid: 4801621f11017464281577ad8fa38a2b,
         type: 3}
       propertyPath: m_LocalScale.x
@@ -903,6 +874,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8870746717138188904, guid: 4801621f11017464281577ad8fa38a2b,
+        type: 3}
+      propertyPath: m_Name
+      value: TempWall
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -967,130 +943,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5826272125667549736, guid: 81fabb9f6205b934980770447ec12170,
-        type: 3}
-      propertyPath: wall
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 5826272125667549736, guid: 81fabb9f6205b934980770447ec12170,
-        type: 3}
-      propertyPath: Arc.Radius
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5826272125667549736, guid: 81fabb9f6205b934980770447ec12170,
-        type: 3}
-      propertyPath: arc.Radius
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5826272125667549736, guid: 81fabb9f6205b934980770447ec12170,
-        type: 3}
-      propertyPath: MaximumRadius
-      value: 15
-      objectReference: {fileID: 0}
-    - target: {fileID: 5826272125667549736, guid: 81fabb9f6205b934980770447ec12170,
-        type: 3}
-      propertyPath: maximumRadius
-      value: 1000
-      objectReference: {fileID: 0}
-    - target: {fileID: 5826272125667549736, guid: 81fabb9f6205b934980770447ec12170,
-        type: 3}
-      propertyPath: ExpansionSpeed
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5826272125667549736, guid: 81fabb9f6205b934980770447ec12170,
-        type: 3}
-      propertyPath: expansionSpeed
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 5826272125667549736, guid: 81fabb9f6205b934980770447ec12170,
-        type: 3}
-      propertyPath: InitialStrength
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5826272125667549736, guid: 81fabb9f6205b934980770447ec12170,
-        type: 3}
-      propertyPath: arc.Angle.EndAngle
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 5826272125667549736, guid: 81fabb9f6205b934980770447ec12170,
-        type: 3}
-      propertyPath: wallList.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5826272125667549736, guid: 81fabb9f6205b934980770447ec12170,
-        type: 3}
-      propertyPath: Arc.Angle.AngleRange
-      value: 0.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 5826272125667549736, guid: 81fabb9f6205b934980770447ec12170,
-        type: 3}
-      propertyPath: Arc.Angle.StartAngle
-      value: 2.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 5826272125667549736, guid: 81fabb9f6205b934980770447ec12170,
-        type: 3}
-      propertyPath: arc.Angle.AngleRange
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 5826272125667549736, guid: 81fabb9f6205b934980770447ec12170,
-        type: 3}
-      propertyPath: arc.Angle.StartAngle
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 5826272125667549736, guid: 81fabb9f6205b934980770447ec12170,
-        type: 3}
-      propertyPath: MinimumExpansionSpeed
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5826272125667549736, guid: 81fabb9f6205b934980770447ec12170,
-        type: 3}
-      propertyPath: wallList.Array.data[0]
-      value: 
-      objectReference: {fileID: 396735779}
-    - target: {fileID: 5826272125667549736, guid: 81fabb9f6205b934980770447ec12170,
-        type: 3}
-      propertyPath: wallList.Array.data[1]
-      value: 
-      objectReference: {fileID: 733210564}
-    - target: {fileID: 5826272125667549736, guid: 81fabb9f6205b934980770447ec12170,
-        type: 3}
-      propertyPath: wallList.Array.data[2]
-      value: 
-      objectReference: {fileID: 733210564}
     - target: {fileID: 6425850899133785793, guid: 81fabb9f6205b934980770447ec12170,
         type: 3}
       propertyPath: m_Name
       value: VoiceWave
-      objectReference: {fileID: 0}
-    - target: {fileID: 7562314411627440236, guid: 81fabb9f6205b934980770447ec12170,
-        type: 3}
-      propertyPath: arc.Radius
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 7562314411627440236, guid: 81fabb9f6205b934980770447ec12170,
-        type: 3}
-      propertyPath: arc.Center.x
-      value: -3.71
-      objectReference: {fileID: 0}
-    - target: {fileID: 7562314411627440236, guid: 81fabb9f6205b934980770447ec12170,
-        type: 3}
-      propertyPath: arc.Center.y
-      value: -1.74
-      objectReference: {fileID: 0}
-    - target: {fileID: 7562314411627440236, guid: 81fabb9f6205b934980770447ec12170,
-        type: 3}
-      propertyPath: arc.Angle.EndAngle
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 7562314411627440236, guid: 81fabb9f6205b934980770447ec12170,
-        type: 3}
-      propertyPath: arc.Angle.AngleRange
-      value: 0.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 7562314411627440236, guid: 81fabb9f6205b934980770447ec12170,
-        type: 3}
-      propertyPath: arc.Angle.StartAngle
-      value: 28
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

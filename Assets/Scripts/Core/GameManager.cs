@@ -109,12 +109,13 @@ public class GameManager : Singleton<GameManager> {
     }
 
     public void GoPrologue() {
-        state = GameState.Prologue;
-        levelProgress = TotalLevel;
-        SceneChange(levelScenes()[levelProgress]);
+        //state = GameState.Prologue;
+        //levelProgress = TotalLevel;
+        //SceneChange(levelScenes()[levelProgress]);
 
-        SceneUIManager.Instance.ClearCanvas();
-        Debug.LogFormat("GameManager load ending scene", levelScenes()[levelProgress]);
+        //SceneUIManager.Instance.ClearCanvas();
+        //Debug.LogFormat("GameManager load ending scene", levelScenes()[levelProgress]);
+        GoTitleScreen();
     }
 
     public void GoTitleScreen() {
