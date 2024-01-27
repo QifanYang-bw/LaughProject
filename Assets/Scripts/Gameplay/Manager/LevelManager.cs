@@ -70,9 +70,6 @@ namespace Assets.Scripts {
         }
 
         private void Update() {
-            if (GravityManager.instance == null) {
-                return;
-            }
             if (GameManager.Instance.state != GameState.Game || isPaused) {
                 // Not in game (e.g. ScoreBoard) or paused, disable keyboard Interactions
                 //Debug.LogFormat("[bullettime] {0} {1}", GameManager.Instance.state, isPaused);
@@ -152,16 +149,6 @@ namespace Assets.Scripts {
             );
         }
 
-        public int GetFullGoldCount() {
-            Debug.LogFormat("[LevelManager] objectParent GetFullGoldCount {0}", objectParent);
-            Bounty[] bountyTrans = objectParent.GetComponentsInChildren<Bounty>();
-            int fullGoldScore = 0;
-            foreach (Bounty bounty in bountyTrans) {
-                fullGoldScore += bounty.gold;
-            }
-            Debug.LogFormat("fullGoldScore {0}", fullGoldScore);
-            return fullGoldScore;
-        }
 
         public void OnPatternCollected() {
             Debug.LogFormat("OnPatternCollected");

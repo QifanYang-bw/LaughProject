@@ -58,23 +58,4 @@ public class TwistEffect : PostEffectsBase {
         pos = new Vector2(x, y);
         _startTime = Time.time;
     }
-
-    public void UpdateWellTwist(Vector2 pos, GravityWellModifierStatus status, float strength) {
-        bool targetTwistingState = status != GravityWellModifierStatus.None;
-        if (_isTwisting == targetTwistingState) {
-            return;
-        }
-        if (targetTwistingState) {
-            Vector2 screenPos = Camera.main.WorldToScreenPoint(pos);
-            //Debug.LogFormat("twist {0} {1} {2} {3}", screenPos.x, screenPos.y, strength, status);
-            TwistPlane(
-                screenPos.x / Screen.width,
-                screenPos.y / Screen.height,
-                strength * _wellStrengthMultiplier, 
-                status == GravityWellModifierStatus.Attract
-            );
-        } else {
-            _isTwisting = false;
-        }
-    }
 }

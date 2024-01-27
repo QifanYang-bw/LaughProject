@@ -45,11 +45,6 @@ namespace Assets.Scripts {
         }
 
         public void SwitchBulletTimeEffect(bool isEnabled) {
-            if (LevelManager.instance == null) {
-                return;
-            }
-            GravityManager.instance.ball.SwitchTrajectoryState(isEnabled);
-            LevelManager.instance.blurEffect.intensity = isEnabled ? 0.4f : 0f;
         }
 
         public void UpdatePanelMainStrokeData(LevelScoreModel model) {

@@ -138,7 +138,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 87840556}
-  - component: {fileID: 87840555}
   - component: {fileID: 87840557}
   m_Layer: 0
   m_Name: Game
@@ -147,29 +146,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &87840555
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 87840554}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c7ddffa0a6e2ac94c83ff3669395e17a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speedRatio: 1
-  bulletTimeSlowRatio: 0.2
-  predictionLineStepCount: 500
-  damping: 0
-  wells: []
-  ball: {fileID: 0}
-  predictionLineStepRatio: 0
-  predictionLineSegmentCoverage: 2
-  ballData:
-    position: {x: 0, y: 0, z: 0}
-    initialSpeed: {x: 0, y: 0, z: 0}
 --- !u!4 &87840556
 Transform:
   m_ObjectHideFlags: 0
@@ -207,6 +183,7 @@ MonoBehaviour:
     difficulty: 0
   twistEffect: {fileID: 0}
   blurEffect: {fileID: 0}
+  wallList: []
   Npcs: []
 --- !u!1 &177738081 stripped
 GameObject:
