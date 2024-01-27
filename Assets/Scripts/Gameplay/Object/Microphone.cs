@@ -20,20 +20,18 @@ public class Microphone : MonoBehaviour
     public void OnVoiceWaveHit(VoiceWave voiceWave)
     {
         Debug.Log("microphone OnVoiceWaveHit");
-        OnTriggerd(voiceWave.SoundType);
+        OnTriggerd();
     }
 
 
-    private void OnTriggerd(SoundTypes soundType)
+    private void OnTriggerd()
     {
         foreach (var speaker in RelatedSpeakerList)
         {
-            speaker.GetComponent<Speaker>().Trigger(soundType);
+            speaker.GetComponent<Speaker>().Trigger();
         }
     }
 
     // related speakers
     public List<GameObject> RelatedSpeakerList = new List<GameObject>();
-    // sound type
-    public SoundTypes SoundType;
 }
