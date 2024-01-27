@@ -97,13 +97,22 @@ public class ArcModel {
             startAngle += 360;
         }
 
-        var endAngle = GeoLib.ConvertRadiansToDegrees(Angle.StartAngle + Angle.AngleRange);
+        var endAngle = startAngle + GeoLib.ConvertRadiansToDegrees(Angle.AngleRange);
         if (endAngle < 0)
         {
-            endAngle += Angle.AngleRange;
+            endAngle += 360;
         }
 
-        // Check if the angle is within the pie's start and end angles
-        return angle >= startAngle && angle <= endAngle;
+        bool IsWithinRange(double x, double l, double r)
+        {
+            return l <= x && x <= r;
+        }
+
+        if (IsWithinRange(360f, startAngle, endAngle))
+        {
+            return IsWithinRange(angle, startAngle, 360) || IsWithinRange(angle, 0, endAngle - 360);
+        }
+
+        return IsWithinRange(angle, startAngle, endAngle);
     }
 }
