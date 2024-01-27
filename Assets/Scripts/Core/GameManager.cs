@@ -150,11 +150,11 @@ public class GameManager : Singleton<GameManager> {
             isLevelSelectionDisabled = false;
         }
         SceneChange(levelScenes()[levelProgress]);
-        Material backgroundMaterial = AssetHelper.instance.BackgroundMaterials[levelProgress];
-        if (backgroundMaterial != null) {
-            Debug.LogFormat("SceneChange background {0}, material {1}", levelScenes()[levelProgress], backgroundMaterial);
-            Plane.Instance?.UpdateImage(levelScenes()[levelProgress], backgroundMaterial);
-        }
+        //Material backgroundMaterial = AssetHelper.instance.BackgroundMaterials[levelProgress];
+        //if (backgroundMaterial != null) {
+        //    Debug.LogFormat("SceneChange background {0}, material {1}", levelScenes()[levelProgress], backgroundMaterial);
+        //    Plane.Instance?.UpdateImage(levelScenes()[levelProgress], backgroundMaterial);
+        //}
 
         SceneUIManager.Instance.RefreshCanvas();
         Debug.LogFormat("GameManager load scene {0}", levelScenes()[levelProgress]);
