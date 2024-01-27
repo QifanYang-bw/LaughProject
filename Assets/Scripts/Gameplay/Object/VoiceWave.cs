@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Assets.Scripts;
 using Assets.Scripts.Gameplay.Model;
 using UnityEngine;
 
@@ -15,6 +16,7 @@ public class VoiceWave : MonoBehaviour {
 
     // Debug Vars
     public List<Wall> wallList;
+    private List<NPC> _npcList;
 
     private void Awake() {
         Arc.Center = transform.position;
@@ -24,8 +26,36 @@ public class VoiceWave : MonoBehaviour {
         rendererEx.arc = Arc;
     }
 
-    private void ExamineCollision() {
+    private void Start()
+    {
+        // copy a list for modify
+        _npcList = new List<NPC>(LevelManager.instance.Npcs);
+    }
 
+    private void ExamineCollision() {
+        ExamineNpcCollision();
+    }
+
+    private void ExamineNpcCollision()
+    {
+        if (_npcList.Count == 0)
+            return;
+        List<NPC> needRemoved = new List<NPC>();
+        foreach (var npc in _npcList)
+        {
+            if (!Arc.IsPointInsideArcRange(npc.transform.position))
+            {
+                needRemoved.Add(npc);
+                continue;
+            }
+
+            if (!Arc.IsContainPoint(npc.transform.position))
+                continue;
+            npc.OnVoiceWaveHit(this);
+            needRemoved.Add(npc);
+        }
+
+        _npcList.RemoveAll(item => needRemoved.Contains(item));
     }
 
     private void Update() {
@@ -44,6 +74,8 @@ public class VoiceWave : MonoBehaviour {
         //}
         Arc.Radius += Time.deltaTime * expansionSpeed;
         rendererEx.SetupCircle();
+
+        ExamineCollision();
     }
 
     public bool IsRemovable() {

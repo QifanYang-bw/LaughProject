@@ -2,6 +2,7 @@
 using Assets.Scripts.CanvasUI;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Unity.Jobs;
 using UnityEngine;
 using UnityEngine.XR;
@@ -25,6 +26,8 @@ namespace Assets.Scripts {
         public TwistEffect twistEffect;
         public BlurEffect blurEffect;
 
+        public List<NPC> Npcs;
+
         private void Awake() {
             instance = this;
         }
@@ -34,6 +37,13 @@ namespace Assets.Scripts {
             twistEffect = mainCamera.gameObject.AddComponent<TwistEffect>();
             blurEffect = mainCamera.gameObject.AddComponent<BlurEffect>();
             objectParent = GameObject.Find("Objects")?.transform;
+
+            if (objectParent != null)
+                Npcs.AddRange(objectParent.GetComponentsInChildren<NPC>());
+            foreach (var npc in Npcs)
+            {
+                npc.OnMoodChangEvent += CheckAllNpcLaugh;
+            }
 
             curElapsedTime = Time.time;
             if (GameManager.Instance.UserDataModel.levelScoreDict.ContainsKey(GameManager.Instance.currentLevelName())) {
@@ -149,6 +159,14 @@ namespace Assets.Scripts {
         public void OnPatternCollected() {
             Debug.LogFormat("OnPatternCollected");
             SceneUIManager.Instance.UpdatePanelMainStrokeData(GetScore());
+        }
+
+        private void CheckAllNpcLaugh()
+        {
+            if (!Npcs.TrueForAll(npc => npc.IsLaughing))
+                return;
+            Debug.Log("level pass!");
+            // todo lwttai
         }
     }
 }

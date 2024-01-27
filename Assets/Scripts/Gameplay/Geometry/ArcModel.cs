@@ -59,4 +59,51 @@ public class ArcModel {
     public bool isEmpty() {
         return Angle.AngleRange <= 1e-5f;
     }
+
+    public bool IsContainPoint(Vector2 point)
+    {
+        // Calculate the vector from the center of the pie to the point
+        Vector2 fromCenterToPoint = point - Center;
+
+        // Calculate the distance from the center of the pie to the point
+        float distanceToCenter = fromCenterToPoint.magnitude;
+
+        // Check if the point is within the pie's radius
+        if (distanceToCenter > Radius)
+        {
+            return false;
+        }
+
+        return IsPointInsideArcRange(point);
+    }
+
+    public bool IsPointInsideArcRange(Vector2 point)
+    {
+        // Calculate the vector from the center of the pie to the point
+        Vector2 fromCenterToPoint = point - Center;
+
+        // Calculate the angle from the positive x-axis to the vector
+        float angle = Vector2.SignedAngle(Vector2.right, fromCenterToPoint);
+
+        // Ensure the angle is positive
+        if (angle < 0)
+        {
+            angle += 360;
+        }
+
+        var startAngle = GeoLib.ConvertRadiansToDegrees(Angle.StartAngle);
+        if (startAngle < 0)
+        {
+            startAngle += 360;
+        }
+
+        var endAngle = GeoLib.ConvertRadiansToDegrees(Angle.StartAngle + Angle.AngleRange);
+        if (endAngle < 0)
+        {
+            endAngle += Angle.AngleRange;
+        }
+
+        // Check if the angle is within the pie's start and end angles
+        return angle >= startAngle && angle <= endAngle;
+    }
 }

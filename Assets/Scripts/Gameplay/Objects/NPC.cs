@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Assets.Scripts.Gameplay.Model;
 using UnityEngine;
 
 public class NPC : MonoBehaviour
@@ -16,6 +18,24 @@ public class NPC : MonoBehaviour
         
     }
 
+    public void OnVoiceWaveHit(VoiceWave voiceWave)
+    {
+        Debug.Log("OnVoiceWaveHit");
+        switch (voiceWave.SoundType)
+        {
+            case SoundTypes.Laugh:
+                MoodValue -= 1;
+                break;
+            case SoundTypes.Noise:
+                MoodValue += 1;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+        UpdateByMood();
+        OnMoodChangEvent?.Invoke();
+    }
+
     //void OnTriggerEnter2D(Collider2D other)
     //{
     //    // todo test other and modify MoodValue
@@ -27,13 +47,6 @@ public class NPC : MonoBehaviour
     //
     //    UpdateByMood();
     //}
-
-    // for 
-    void RaiseMood()
-    {
-        MoodValue -= 1;
-        UpdateByMood();
-    }
 
     private void UpdateByMood()
     {
@@ -47,7 +60,13 @@ public class NPC : MonoBehaviour
         }
     }
 
+
+
     // mood value
     public int MoodValue = 0;
-
+    public bool IsLaughing
+    {
+        get { return MoodValue <= 0; }
+    }
+    public event Action OnMoodChangEvent;
 }
