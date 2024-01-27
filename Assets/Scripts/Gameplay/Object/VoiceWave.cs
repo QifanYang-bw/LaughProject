@@ -12,7 +12,16 @@ public class VoiceWave : MonoBehaviour {
     public SoundTypes SoundType;
 
     public float maximumRadius = 10f;
+    public float MinimumExpansionSpeed = 1.0f;
+    [Header("Runtime Variables")]
     public float expansionSpeed = 1.0f;
+    public float SpeedRatio = 1.0f;
+
+    public float InitialStrength = 10;
+    [Header("Runtime Variables")]
+    public float RuntimeStrength = 10;
+    // strength value per sec
+    public float StrengthRatio = 1.0f;
 
     // Debug Vars
     public List<Wall> wallList;
@@ -25,6 +34,8 @@ public class VoiceWave : MonoBehaviour {
 
         rendererEx = GetComponent<VoiceWaveLineRendererEx>();
         rendererEx.arc = Arc;
+
+        RuntimeStrength = InitialStrength;
     }
 
     private void Start()
@@ -87,6 +98,9 @@ public class VoiceWave : MonoBehaviour {
     }
 
     private void Update() {
+        UpdateStrength();
+        UpdateSpeed();
+
         //(bool collision, double radius) = GeoLib.ArcCollisionRadiusWithSegment(Arc, wall.seg);
 
         //Debug.LogFormat("VoiceWave PredictedDistanceToArc {0} {1}", collision, radius);
@@ -104,6 +118,9 @@ public class VoiceWave : MonoBehaviour {
         rendererEx.SetupCircle();
 
         ExamineCollision();
+
+        if (RuntimeStrength <= 0)
+            Destroy(gameObject);
     }
 
     public bool IsRemovable() {
@@ -128,5 +145,15 @@ public class VoiceWave : MonoBehaviour {
             Debug.LogAssertionFormat("Arc Expand delta {0} < 0", RadDelta);
             return;
         }
+    }
+
+    private void UpdateSpeed()
+    {
+        expansionSpeed = Math.Max(MinimumExpansionSpeed, RuntimeStrength * SpeedRatio);
+    }
+
+    private void UpdateStrength()
+    {
+        RuntimeStrength -= Time.deltaTime * StrengthRatio;
     }
 }
