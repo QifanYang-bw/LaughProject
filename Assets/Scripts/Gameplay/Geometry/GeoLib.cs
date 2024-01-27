@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Unity.Burst.Intrinsics;
 using UnityEditor.VersionControl;
 using UnityEngine;
@@ -184,13 +185,22 @@ public class GeoLib {
         } else {
             // Debug.LogFormat("ArcCollisionRadiusWithSegment perp Collision {0}, Angle{1}, Dist {2}", perpCollision, perpAngle, perpDist);
         }
+        // The circumstance in which the segment's two endpoint become the point of contact
+        bool pointACollision = IsAngleWithinArc(arc, CalculateAngle(arc.Center, seg.PointA));
+        double pointADist = 0;
+        if (pointACollision) {
+            pointADist = Vector2.Distance(seg.PointA, arc.Center);
+        }
+        bool pointBCollision = IsAngleWithinArc(arc, CalculateAngle(arc.Center, seg.PointB));
+        double pointBDist = 0;
+        if (pointBCollision) {
+            pointBDist = Vector2.Distance(seg.PointB, arc.Center);
+        }
 
-        if (!rayACollision && !rayBCollision && !perpCollision) {
+        if (!rayACollision && !rayBCollision && !perpCollision && !pointACollision && !pointBCollision) {
             Debug.LogAssertionFormat("ArcCollisionRadiusWithSegment pass check but point non found: arc {0}, seg {1}", arc.Description(), seg.Description());
             return (false, Vector2.zero, double.PositiveInfinity);
         }
-        // TODO: Collision Point may locate on the end of segments, check
-
         double dist = double.PositiveInfinity;
         Vector2 point = Vector2.zero;
         if (rayACollision && rayADist < dist) {
@@ -206,6 +216,14 @@ public class GeoLib {
         if (perpCollision && perpDist < dist) {
             dist = perpDist;
             point = perpIntersectPoint;
+        }
+        if (pointACollision && pointADist < dist) {
+            dist = pointADist;
+            point = seg.PointA;
+        }
+        if (pointBCollision && pointBDist < dist) {
+            dist = pointBDist;
+            point = seg.PointA;
         }
 
         // Debug.LogFormat("ArcCollisionRadiusWithSegment res {0}, Dist {1}", true, dist);
@@ -255,4 +273,78 @@ public class GeoLib {
         RayModel reflectedRay = new RayModel(reflectedOrigin, reflectedDirection);
         return (true, reflectedRay);
     }
+
+    public static List<Vector2> FindCircleLineCollision(Vector2 circleCenter, float radius, Vector2 linePoint1, Vector2 linePoint2) {
+        List<Vector2> collisionPoints = new List<Vector2>();
+
+        // Calculate the vector from linePoint1 to linePoint2
+        Vector2 lineVector = linePoint2 - linePoint1;
+
+        // Calculate the vector from linePoint1 to the circle center
+        Vector2 circleVector = circleCenter - linePoint1;
+
+        // Project circleVector onto lineVector
+        float projectionFactor = Vector2.Dot(circleVector, lineVector) / lineVector.sqrMagnitude;
+        Vector2 projectionVector = projectionFactor * lineVector;
+
+        // Calculate the intersection point (closest point on the line segment to the circle center)
+        Vector2 intersectionPoint = linePoint1 + projectionVector;
+
+        // Clamp the intersection point to the line segment
+        float t = Mathf.Clamp01(projectionFactor);
+        Vector2 clampedIntersectionPoint = linePoint1 + t * lineVector;
+
+        // Calculate the distance between the clamped intersection point and the circle center
+        float distance = Vector2.Distance(clampedIntersectionPoint, circleCenter);
+
+        if (distance <= radius) {
+            // Calculate the distance from the clamped intersection point to the collision points
+            float collisionDistance = Mathf.Sqrt(radius * radius - distance * distance);
+
+            // Calculate the collision points
+            Vector2 collisionDirection = (collisionDistance / lineVector.magnitude) * lineVector;
+
+            // Check if the collision points lie on the line segment
+            Vector2 collisionPoint1 = clampedIntersectionPoint + collisionDirection;
+            if (IsPointOnLineSegment(collisionPoint1, linePoint1, linePoint2)) {
+                collisionPoints.Add(collisionPoint1);
+            }
+
+            if (collisionDistance > 0) {
+                Vector2 collisionPoint2 = clampedIntersectionPoint - collisionDirection;
+                if (IsPointOnLineSegment(collisionPoint2, linePoint1, linePoint2)) {
+                    collisionPoints.Add(collisionPoint2);
+                }
+            }
+        }
+
+        return collisionPoints;
+    }
+
+    public static bool IsPointOnLineSegment(Vector2 point, Vector2 linePoint1, Vector2 linePoint2) {
+        float minX = Mathf.Min(linePoint1.x, linePoint2.x);
+        float maxX = Mathf.Max(linePoint1.x, linePoint2.x);
+        float minY = Mathf.Min(linePoint1.y, linePoint2.y);
+        float maxY = Mathf.Max(linePoint1.y, linePoint2.y);
+
+        return point.x >= minX && point.x <= maxX && point.y >= minY && point.y <= maxY;
+    }
+
+
+    public static (bool, Vector2) FindOneArcSegmentCollision(ArcModel arc, SegmentModel seg) {
+        List<Vector2> collisionPointList = GeoLib.FindCircleLineCollision(arc.Center, (float)arc.Radius, seg.PointA, seg.PointB);
+        bool found = false;
+        Vector2 collisionPoint = Vector2.zero;
+        if (collisionPointList.Count > 0) {
+            foreach (Vector2 collisionCirclePoint in collisionPointList) {
+                double pointAngle = GeoLib.CalculateAngle(arc.Center, collisionCirclePoint);
+                if (GeoLib.IsAngleWithinArc(arc, pointAngle)) {
+                    found = true;
+                    collisionPoint = collisionCirclePoint;
+                }
+            }
+        }
+        return (found, collisionPoint);
+    }
+
 }

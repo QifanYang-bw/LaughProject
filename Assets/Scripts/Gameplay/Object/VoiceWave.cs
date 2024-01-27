@@ -5,6 +5,7 @@ using UnityEditor;
 using System.Drawing;
 using Unity.Burst.Intrinsics;
 using Assets.Scripts;
+using System.Runtime.CompilerServices;
 
 [Serializable]
 public class VoiceCollisionModel {
@@ -84,10 +85,10 @@ public class VoiceWave : MonoBehaviour {
             if (RightLink != null) {
                 RightLink.isBroken = true;
             }
-            //Destroy(this.gameObject);
-            this.gameObject.SetActive(false);
+            Discard();
             return;
         }
+        double beforeRadius = Arc.Radius;
         Expand(Time.deltaTime * ExpansionSpeed);
         if (RightLink == null) {
             Debug.LogFormat("VoiceWave RightLink is null");
@@ -95,10 +96,12 @@ public class VoiceWave : MonoBehaviour {
             Debug.LogFormat("VoiceWave RightLink.ArcStatus {0}", RightLink.ArcStatus(Arc));
         }
         if (RightLink != null && RightLink.ArcStatus(Arc) == ArcEndPointStatus.ArcEndPointStatusShrinking) {
-            (bool collision, Vector2 collisionPoint, double radius) = GeoLib.ArcCollisionRadiusWithSegment(Arc, RightLink.Segment);
+            (bool collision, Vector2 collisionPoint) = GeoLib.FindOneArcSegmentCollision(Arc, RightLink.Segment);
             if (collision) {
                 double newAngle = GeoLib.CalculateAngle(Arc.Center, collisionPoint);
                 double newAngleDelta = newAngle - Arc.Angle.StartAngle;
+                Debug.LogFormat("VoiceWave update Right angle: collisionPoint {0}, startAngle {1}, newAngle {2}, angle delta {3}",
+                                 collisionPoint, Arc.Angle.StartAngle, newAngle, newAngleDelta);
                 if (newAngleDelta < 0) {
                     Debug.LogAssertionFormat("VoiceWave update angle delta < 0: collisionPoint {0}, arc {1}, new Angle {2}, angle delta {3}",
                                               collisionPoint, Arc, newAngle, newAngleDelta);
@@ -107,8 +110,8 @@ public class VoiceWave : MonoBehaviour {
                 if (newAngleDelta > Math.PI) {
                     newAngleDelta = Math.PI * 2f - newAngleDelta;
                 }
-                Debug.LogFormat("VoiceWave update Chain newAngle {0} angleDelta {1} \r\n self {2}",
-                                 newAngle, newAngleDelta, Arc);
+                Debug.LogFormat("VoiceWave update Chain newAngle {0} angleDelta {1} \r\n Arc {2}",
+                                 newAngle, newAngleDelta, Arc.Description());
                 RightLink.ChainAngle(newAngleDelta);
             } else {
                 RightLink.isBroken = true;
@@ -121,10 +124,14 @@ public class VoiceWave : MonoBehaviour {
             Debug.LogFormat("VoiceWave LeftLink.ArcStatus {0}", LeftLink.ArcStatus(Arc));
         }
         if (LeftLink != null && LeftLink.ArcStatus(Arc) == ArcEndPointStatus.ArcEndPointStatusShrinking) {
-            (bool collision, Vector2 collisionPoint, double radius) = GeoLib.ArcCollisionRadiusWithSegment(Arc, LeftLink.Segment);
+            (bool collision, Vector2 collisionPoint) = GeoLib.FindOneArcSegmentCollision(Arc, LeftLink.Segment);
             if (collision) {
                 double newAngle = GeoLib.CalculateAngle(Arc.Center, collisionPoint);
                 double newAngleDelta = Arc.Angle.EndAngle - newAngle;
+
+                GameObject circle = GameObject.Find("TestCircle");
+                circle.transform.position = collisionPoint;
+
                 if (newAngleDelta < 0) {
                     Debug.LogAssertionFormat("VoiceWave update angle delta < 0: collisionPoint {0}, arc {1}, new Angle {2}, angle delta {3}",
                                               collisionPoint, Arc, newAngle, newAngleDelta);
@@ -213,8 +220,7 @@ public class VoiceWave : MonoBehaviour {
                     Debug.LogFormat("Arc twoLinkModel {0}", twoLinkModel.Description());
                     Debug.LogFormat("Arc oneLinkModel {0}", oneLinkModel.Description());
                     Debug.LogFormat("Arc ReflectedArc this {0} destroyed.", Arc.Description());
-                    //Destroy(this.gameObject);
-                    this.gameObject.SetActive(false);
+                    Discard();
                     return;
                 }
             }
@@ -282,5 +288,13 @@ public class VoiceWave : MonoBehaviour {
             RightLink.isBroken = true;
         }
         RightLink = linkModel;
+    }
+
+    private void Discard() {
+#if UNITY_EDITOR
+        gameObject.SetActive(false);
+#else
+        Destroy(this.gameObject);
+#endif
     }
 }

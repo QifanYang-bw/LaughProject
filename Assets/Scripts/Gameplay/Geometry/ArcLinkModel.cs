@@ -9,6 +9,7 @@ public enum ArcEndPointStatus {
     ArcEndPointStatusShrinking = 2
 }
 
+[Serializable]
 public class ArcLinkModel {
     public bool isBroken;
     public ArcModel LeftArc, RightArc;
@@ -28,7 +29,7 @@ public class ArcLinkModel {
         if (Arc == LeftArc) {
             return LeftStatus;
         }
-        if (Arc == LeftArc) {
+        if (Arc == RightArc) {
             return RightStatus;
         }
         return ArcEndPointStatus.ArcEndPointStatusUnknown;

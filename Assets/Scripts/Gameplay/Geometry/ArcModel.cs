@@ -57,6 +57,6 @@ public class ArcModel {
     }
 
     public bool isEmpty() {
-        return Angle.AngleRange <= 1e-5f;
+        return Angle.AngleRange <= 7e-3f;
     }
 }
