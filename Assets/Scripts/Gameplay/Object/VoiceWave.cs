@@ -17,6 +17,7 @@ public class VoiceWave : MonoBehaviour {
     // Debug Vars
     public List<Wall> wallList;
     private List<NPC> _npcList;
+    private List<Microphone> _microphoneList;
 
     private void Awake() {
         Arc.Center = transform.position;
@@ -30,10 +31,37 @@ public class VoiceWave : MonoBehaviour {
     {
         // copy a list for modify
         _npcList = new List<NPC>(LevelManager.instance.Npcs);
+        _microphoneList = new List<Microphone>(transform.parent.GetComponentsInChildren<Microphone>());
+        Debug.Log($"microphoes:{_microphoneList.Count}");
     }
 
     private void ExamineCollision() {
+        ExamineMicrophoneCollision();
         ExamineNpcCollision();
+    }
+
+    private void ExamineMicrophoneCollision()
+    {
+        if (_microphoneList.Count == 0)
+            return;
+        List<Microphone> needRemoved = new List<Microphone>();
+        foreach (var microphone in _microphoneList)
+        {
+            if (!Arc.IsPointInsideArcRange(microphone.transform.position))
+            {
+                Debug.Log($"ExamineMicrophoneCollision microphone not in range {microphone.transform.position}");
+                needRemoved.Add(microphone);
+                continue;
+            }
+
+            if (!Arc.IsContainPoint(microphone.transform.position))
+                continue;
+            Debug.Log("ExamineMicrophoneCollision hit microphone");
+            microphone.OnVoiceWaveHit(this);
+            needRemoved.Add(microphone);
+        }
+
+        _microphoneList.RemoveAll(item => needRemoved.Contains(item));
     }
 
     private void ExamineNpcCollision()

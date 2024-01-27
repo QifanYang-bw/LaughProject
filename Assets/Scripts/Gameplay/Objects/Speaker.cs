@@ -21,6 +21,7 @@ public class Speaker : MonoBehaviour
 
     public void Trigger(SoundTypes type)
     {
+        Debug.Log("speaker trigger");
         PlaySound(type);
     }
 

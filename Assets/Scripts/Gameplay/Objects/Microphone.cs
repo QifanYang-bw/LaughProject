@@ -17,11 +17,18 @@ public class Microphone : MonoBehaviour
         
     }
 
-    private void OnTriggerd()
+    public void OnVoiceWaveHit(VoiceWave voiceWave)
+    {
+        Debug.Log("microphone OnVoiceWaveHit");
+        OnTriggerd(voiceWave.SoundType);
+    }
+
+
+    private void OnTriggerd(SoundTypes soundType)
     {
         foreach (var speaker in RelatedSpeakerList)
         {
-            //todo lwttai
+            speaker.GetComponent<Speaker>().Trigger(soundType);
         }
     }
 
