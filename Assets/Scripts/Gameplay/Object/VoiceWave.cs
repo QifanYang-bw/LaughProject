@@ -46,7 +46,6 @@ public class VoiceWave : MonoBehaviour {
     public bool isHidden;
 
     // Debug Vars
-    public List<Wall> wallList;
     private List<NPC> _npcList;
     private List<Microphone> _microphoneList;
 
@@ -70,7 +69,10 @@ public class VoiceWave : MonoBehaviour {
     }
 
     private void ExamineCollision() {
-        foreach (Wall wall in wallList) {
+        if (!LevelManager.instance) {
+            return;
+        }
+        foreach (Wall wall in LevelManager.instance.wallList) {
             // Check whether the wall is the source it comes from
             if (wall == sourceWall || wall == null) {
                 continue;
@@ -353,8 +355,6 @@ public class VoiceWave : MonoBehaviour {
         newWave.MaximumRadius = MaximumRadius;
 
         newWave.sourceWall = collisionWall;
-        // TODO: Move to global
-        newWave.wallList = wallList;
         return newWave;
     }
 

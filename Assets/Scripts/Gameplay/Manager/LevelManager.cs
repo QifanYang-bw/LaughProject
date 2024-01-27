@@ -1,5 +1,4 @@
-﻿using Assets.Scripts;
-using Assets.Scripts.CanvasUI;
+﻿using Assets.Scripts.CanvasUI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -26,6 +25,7 @@ namespace Assets.Scripts {
         public TwistEffect twistEffect;
         public BlurEffect blurEffect;
 
+        public List<Wall> wallList;
         public List<NPC> Npcs;
 
         private void Awake() {
@@ -78,6 +78,13 @@ namespace Assets.Scripts {
                 //Debug.LogFormat("[bullettime] {0} {1}", GameManager.Instance.state, isPaused);
                 return;
             }
+        }
+
+        public void AddWall(Wall wall) {
+            if (wall == null) {
+                return;
+            }
+            wallList.Add(wall);
         }
 
         public void Pass() {

@@ -1,3 +1,4 @@
+using Assets.Scripts;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -37,10 +38,13 @@ public class Wall : MonoBehaviour {
         Vector2 p1 = transform.position + (Vector3)boardHalfSizeShiftVec;
         Vector2 p2 = transform.position - (Vector3)boardHalfSizeShiftVec;
         Seg = new SegmentModel(p1, p2);
+    }
 
-        //RayModel rayModel = new RayModel(-3.71, -1.74, 4.71238898038469);
-        //(bool rayCollision, double rayDist) = GeoLib.RayLineSegmentIntersection(rayModel, seg);
-        //Debug.LogFormat("VoiceWave Awake RayLineSegmentIntersection {0} rayDist {1}", rayCollision, rayDist);
+    private void Start() {
+        if (!LevelManager.instance) {
+            return;
+        }
+        LevelManager.instance.AddWall(this);
     }
 
     private WallTypes GetNextType(VoiceWave voiceWave)
