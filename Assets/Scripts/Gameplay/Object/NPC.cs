@@ -69,6 +69,15 @@ public class NPC : MonoBehaviour
         {
             MoodBubble.GetComponent<Renderer>().enabled = false;
         }
+
+        if (IsLaughing && !GetComponent<AudioSource>().isPlaying)
+        {
+            GetComponent<AudioSource>().Play();
+        }
+        else
+        {
+            GetComponent<AudioSource>().Stop();
+        }
     }
 
 
