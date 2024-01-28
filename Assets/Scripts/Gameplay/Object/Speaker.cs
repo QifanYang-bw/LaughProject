@@ -32,10 +32,16 @@ public class Speaker : MonoBehaviour
         wave.transform.position = transform.position;
         var voiceWave = wave.GetComponent<VoiceWave>();
         voiceWave.SoundType = SoundType;
+        if (SoundStrength != 0)
+        {
+            voiceWave.InitialStrength = SoundStrength;
+        }
         voiceWave.Arc.Center = transform.position;
         voiceWave.Arc.Angle.StartAngle = 0;
         voiceWave.Arc.Angle.AngleRange = 2 * Math.PI;
     }
 
     public SoundTypes SoundType = SoundTypes.Laugh;
+    // use voice wave prefab value if value is 0
+    public float SoundStrength = 0;
 }
