@@ -73,9 +73,7 @@ public class VoiceWave : MonoBehaviour {
         rendererEx = GetComponent<VoiceWaveLineRendererEx>();
         rendererEx.arc = Arc;
 
-        if (IsStaticWave()) {
-            ExamineCollision();
-        }
+        ExamineCollision();
     }
 
     private void ExamineCollision() {
