@@ -77,7 +77,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73afe2b530112d6429255fa6b8d0a163, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Ball: {fileID: 6926638616270293529, guid: 421750f7789d9f94a9723056efc9cd05, type: 3}
   LevelCanvas: {fileID: 2751415515275210295, guid: 72893784b72fc8547bf459e0cabad848,
     type: 3}
   BackgroundMaterials:
@@ -92,6 +91,12 @@ MonoBehaviour:
   - {fileID: 2100000, guid: f507ba5ecd8d254449965231b1cfa2c8, type: 2}
   - {fileID: 2100000, guid: 4ece24ffdcea4124d8bc36f52195d423, type: 2}
   - {fileID: 2100000, guid: de59450dd1a934c4588fbe07ea7711d7, type: 2}
+  WaveMaterials:
+  - {fileID: 2100000, guid: 4d0b39540fbcac149900145393328056, type: 2}
+  - {fileID: 2100000, guid: 094051e26931bbe4ea3f69f377082bfc, type: 2}
+  SpeakerMaterials:
+  - {fileID: 21300000, guid: 74cdb3906d6b38c4fafba72a508d3d6f, type: 3}
+  - {fileID: 21300000, guid: 7b9d0fc0641339e4b95317cdad2c57ae, type: 3}
   WavePrefab: {fileID: 6425850899133785793, guid: 81fabb9f6205b934980770447ec12170,
     type: 3}
   TutorialSceneNames:
