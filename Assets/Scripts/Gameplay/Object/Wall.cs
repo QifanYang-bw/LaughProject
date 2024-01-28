@@ -35,14 +35,7 @@ public class Wall : MonoBehaviour {
 
 
     private void Awake() {
-        float boardHalfLength = transform.lossyScale.x * .5f * imageSizeRatio;
-        Vector2 boardHalfSizeShiftVec = new Vector2(boardHalfLength * (float)Math.Cos(GeoLib.ConvertDegreesToRadians(transform.rotation.eulerAngles.z)),
-                                                    boardHalfLength * (float)Math.Sin(GeoLib.ConvertDegreesToRadians(transform.rotation.eulerAngles.z)));
-
-        // Debug.LogFormat("Wall boardHalfSizeShiftVec {0} angle {1}", boardHalfSizeShiftVec, transform.rotation.eulerAngles.z);
-        Vector2 p1 = transform.position + (Vector3)boardHalfSizeShiftVec;
-        Vector2 p2 = transform.position - (Vector3)boardHalfSizeShiftVec;
-        Seg = new SegmentModel(p1, p2);
+        UpdateGeometryPosition();
     }
 
     private void Start() {
@@ -98,6 +91,16 @@ public class Wall : MonoBehaviour {
         }
     }
 
+    public void UpdateGeometryPosition() {
+        float boardHalfLength = transform.lossyScale.x * .5f * imageSizeRatio;
+        Vector2 boardHalfSizeShiftVec = new Vector2(boardHalfLength * (float)Math.Cos(GeoLib.ConvertDegreesToRadians(transform.rotation.eulerAngles.z)),
+                                                    boardHalfLength * (float)Math.Sin(GeoLib.ConvertDegreesToRadians(transform.rotation.eulerAngles.z)));
+
+        Vector2 p1 = transform.position + (Vector3)boardHalfSizeShiftVec;
+        Vector2 p2 = transform.position - (Vector3)boardHalfSizeShiftVec;
+        Seg = new SegmentModel(p1, p2);
+    }
+
     private void UpdateType(WallTypes type)
     {
         Type = type;
@@ -127,6 +130,7 @@ public class Wall : MonoBehaviour {
     public void TriggerRotate()
     {
         transform.Rotate(0, 0, RotateAngle);
+        UpdateGeometryPosition();
     }
 
 }
