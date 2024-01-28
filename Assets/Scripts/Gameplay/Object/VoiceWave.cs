@@ -73,6 +73,8 @@ public class VoiceWave : MonoBehaviour {
         rendererEx = GetComponent<VoiceWaveLineRendererEx>();
         rendererEx.arc = Arc;
 
+        UpdateUIByType();
+
         ExamineCollision();
     }
 
@@ -409,5 +411,10 @@ public class VoiceWave : MonoBehaviour {
     {
         RuntimeStrength -= Time.deltaTime * StrengthRatio;
         ExpansionSpeed = Math.Max(MinimumExpansionSpeed, RuntimeStrength * SpeedRatio);
+    }
+
+    private void UpdateUIByType()
+    {
+        GetComponent<LineRenderer>().material = AssetHelper.instance.WaveMaterials[(int)SoundType];
     }
 }
