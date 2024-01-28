@@ -87,10 +87,6 @@ public class VoiceWave : MonoBehaviour {
     }
 
     private void OnDestroy() {
-        if (LevelManager.instance != null) {
-            LevelManager.instance.OnLevelReset -= Discard;
-            LevelManager.instance.OnLevelReset -= Discard;
-        }
     }
 
     private void ExamineCollision() {
@@ -440,6 +436,10 @@ public class VoiceWave : MonoBehaviour {
     }
 
     private void Discard() {
+        if (LevelManager.instance != null) {
+            LevelManager.instance.OnLevelReset -= Discard;
+            LevelManager.instance.OnLevelReset -= Discard;
+        }
 #if UNITY_EDITOR
         gameObject.SetActive(false);
 #else
