@@ -132,7 +132,7 @@ public class GeoLib {
             return (false, Vector2.zero, 0, 0);
         }
     }
-    public static (bool, Vector2, double) ArcCollisionRadiusWithSegment(ArcModel arc, SegmentModel seg) {
+    public static (bool, Vector2, double, Vector2, double) ArcCollisionRadiusWithSegment(ArcModel arc, SegmentModel seg) {
         Debug.LogFormat("ArcCollisionRadiusWithSegment seg {0}, arc {1}", seg.Description(), arc.Description());
 
         RayModel rayA = new RayModel(arc.Center, arc.Angle.StartAngle);
@@ -170,36 +170,58 @@ public class GeoLib {
         }
 
         if (!rayACollision && !rayBCollision && !perpCollision && !pointACollision && !pointBCollision) {
-            Debug.LogWarningFormat("ArcCollisionRadiusWithSegment point not found: arc {0}, seg {1}", arc.Description(), seg.Description());
-            return (false, Vector2.zero, double.PositiveInfinity);
+            Debug.LogWarningFormat("ArcCollisionRadiusWithSegment Point Not Found: arc {0}, seg {1}", arc.Description(), seg.Description());
+            return (false, Vector2.zero, double.PositiveInfinity, Vector2.zero, double.PositiveInfinity);
         }
-        double dist = double.PositiveInfinity;
-        Vector2 point = Vector2.zero;
-        if (rayACollision && rayADist < dist) {
-            dist = rayADist;
-            Vector2 shiftVec = new Vector2((float)Math.Cos(rayA.Direction), (float)Math.Sin(rayA.Direction)) * (float)rayADist;
-            point = arc.Center + shiftVec;
+        double minDist = double.PositiveInfinity;
+        Vector2 minPoint = Vector2.zero;
+        if (rayACollision && rayADist < minDist) {
+            minDist = rayADist;
+            minPoint = rayAPoint;
         }
-        if (rayBCollision && rayBDist < dist) {
-            dist = rayBDist;
-            Vector2 shiftVec = new Vector2((float)Math.Cos(rayB.Direction), (float)Math.Sin(rayB.Direction)) * (float)rayBDist;
-            point = arc.Center + shiftVec;
+        if (rayBCollision && rayBDist < minDist) {
+            minDist = rayBDist;
+            minPoint = rayBPoint;
         }
-        if (perpCollision && perpDist < dist) {
-            dist = perpDist;
-            point = perpIntersectPoint;
+        if (perpCollision && perpDist < minDist) {
+            minDist = perpDist;
+            minPoint = perpIntersectPoint;
         }
-        if (pointACollision && pointADist < dist) {
-            dist = pointADist;
-            point = seg.PointA;
+        if (pointACollision && pointADist < minDist) {
+            minDist = pointADist;
+            minPoint = seg.PointA;
         }
-        if (pointBCollision && pointBDist < dist) {
-            dist = pointBDist;
-            point = seg.PointA;
+        if (pointBCollision && pointBDist < minDist) {
+            minDist = pointBDist;
+            minPoint = seg.PointA;
         }
 
-        Debug.LogFormat("ArcCollisionRadiusWithSegment res {0}, pos {1}, Dist {1}", true, point, dist);
-        return (true, point, dist);
+        double maxDist = double.NegativeInfinity;
+        Vector2 maxPoint = Vector2.zero;
+        if (rayACollision && rayADist > maxDist) {
+            maxDist = rayADist;
+            maxPoint = rayAPoint;
+        }
+        if (rayBCollision && rayBDist > maxDist) {
+            maxDist = rayBDist;
+            maxPoint = rayBPoint;
+        }
+        if (perpCollision && perpDist > maxDist) {
+            maxDist = perpDist;
+            maxPoint = perpIntersectPoint;
+        }
+        if (pointACollision && pointADist > maxDist) {
+            maxDist = pointADist;
+            maxPoint = seg.PointA;
+        }
+        if (pointBCollision && pointBDist > maxDist) {
+            maxDist = pointBDist;
+            maxPoint = seg.PointA;
+        }
+
+        Debug.LogWarningFormat("ArcCollisionRadiusWithSegment Point Found: arc {0}, seg {1} \r\n minPos {2}, minDist {3}, maxPos {4}, maxDist {5}",
+                                arc.Description(), seg.Description(), minPoint, minDist, maxPoint, maxDist);
+        return (true, minPoint, minDist, maxPoint, maxDist);
     }
 
     public static (bool, Vector2) FindReflectionPoint(Vector2 point, SegmentModel seg) {
@@ -312,5 +334,18 @@ public class GeoLib {
         } else {
             return (false, double.PositiveInfinity);
         }
+    }
+
+    public static bool SmallerOrEqualThan(double d1, double d2) {
+        return d2 - d1 > -1e-6;
+    }
+    public static bool GreaterOrEqualThan(double d1, double d2) {
+        return d1 - d2 > -1e-6;
+    }
+    public static bool SmallerThan(double d1, double d2) {
+        return d2 - d1 > 1e-6;
+    }
+    public static bool GreaterThan(double d1, double d2) {
+        return d1 - d2 > 1e-6;
     }
 }

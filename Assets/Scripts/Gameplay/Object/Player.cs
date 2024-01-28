@@ -49,8 +49,8 @@ public class Player : MonoBehaviour
         float degreeZ = transform.rotation.eulerAngles.z;
         degreeZ += 90;
 
-        // Hack
-        degreeZ = 10;
+        //// Hack
+        //degreeZ = 10;
         var angle = Degree2Angle(degreeZ);
         arc.Angle = new ArcAngleModel(angle - Degree2Angle(WaveRangeDegree / 2), Degree2Angle(WaveRangeDegree));
     }

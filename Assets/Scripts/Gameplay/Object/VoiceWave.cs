@@ -7,14 +7,16 @@ using UnityEditor;
 
 [Serializable]
 public class VoiceCollisionModel {
-    public double Radius;
+    public double MinRadius, MaxRadius;
     public Wall Target;
-    public Vector2 collisionPoint;
+    public Vector2 MinCollisionPoint, MaxCollisionPoint;
 
-    public VoiceCollisionModel(double radius, Wall target, Vector2 collisionPoint) {
-        this.Radius = radius;
+    public VoiceCollisionModel(Wall target, double MinRadius, Vector2 MinCollisionPoint, double MaxRadius, Vector2 MaxCollisionPoint) {
         this.Target = target;
-        this.collisionPoint = collisionPoint;
+        this.MinRadius = MinRadius;
+        this.MinCollisionPoint = MinCollisionPoint;
+        this.MaxRadius = MaxRadius;
+        this.MaxCollisionPoint = MaxCollisionPoint;
     }
 }
 
@@ -27,7 +29,6 @@ public class VoiceWave : MonoBehaviour {
 
     public float MaximumRadius = 10f;
     public int collisionIndex;
-    public Wall sourceWall;
 
     public float MinimumExpansionSpeed = 1.0f;
     public float SpeedRatio = 1.0f;
@@ -44,6 +45,8 @@ public class VoiceWave : MonoBehaviour {
 
     // Debug Vars
     [SerializeField]
+    private List<Wall> WallBanList;
+    [SerializeField]
     private List<VoiceCollisionModel> _collisionList;
     [SerializeField]
     private List<NPC> _npcList;
@@ -52,12 +55,16 @@ public class VoiceWave : MonoBehaviour {
 
     public ArcLinkModel LeftLink, RightLink;
 
+    private void Awake() {
+        WallBanList = new List<Wall>();
+    }
+
     private void Start() {
         Arc.Center = transform.position;
         Arc.Load();
 
         RuntimeStrength = InitialStrength;
-        // Copy a list for modify
+
         _npcList = LevelManager.instance != null ? new List<NPC>(LevelManager.instance.NpcList) :
                                             new List<NPC>(transform.parent.GetComponentsInChildren<NPC>());
         _microphoneList = LevelManager.instance != null ? new List<Microphone>(LevelManager.instance.MicrophoneList) :
@@ -66,7 +73,9 @@ public class VoiceWave : MonoBehaviour {
         rendererEx = GetComponent<VoiceWaveLineRendererEx>();
         rendererEx.arc = Arc;
 
-        ExamineCollision();
+        if (IsStaticWave()) {
+            ExamineCollision();
+        }
     }
 
     private void ExamineCollision() {
@@ -76,20 +85,22 @@ public class VoiceWave : MonoBehaviour {
         _collisionList.Clear();
         foreach (Wall wall in LevelManager.instance.WallList) {
             // Check whether the wall is the source it comes from
-            if (wall == sourceWall || wall == null) {
+            if (wall == null || WallBanList.Contains(wall)) {
                 continue;
             }
-            (bool collision, Vector2 collisionPoint, double radius) = GeoLib.ArcCollisionRadiusWithSegment(Arc, wall.Seg);
-            Debug.LogFormat("VoiceWave ExamineCollision with seg {0}, res {1}, rad {2}", Arc.Description(), collision, radius);
-            if (!collision || collision && (radius > MaximumRadius || radius < Arc.Radius)) {
+            (bool collision, Vector2 MinCollisionPoint, double MinRadius, Vector2 MaxCollisionPoint, double MaxRadius) = GeoLib.ArcCollisionRadiusWithSegment(Arc, wall.Seg);
+            Debug.LogFormat("VoiceWave ExamineCollision with seg {0}, res {1}, minPos {2}, minDist {3}, maxPos {4}, maxDist {5}",
+                             wall.Seg, collision, MinCollisionPoint, MinRadius, MaxCollisionPoint, MaxRadius);
+            if (collision && (Arc.Radius > MaxRadius) && !WallBanList.Contains(wall)) {
+                WallBanList.Add(wall);
+            }
+            if (!collision || collision && (Arc.Radius > MaxRadius || MaxRadius > MaximumRadius)) {
                 continue;
             }
             // A collision will happen in the future, at least for now
-            VoiceCollisionModel model = new VoiceCollisionModel(radius, wall, collisionPoint);
+            VoiceCollisionModel model = new VoiceCollisionModel(wall, MinRadius, MinCollisionPoint, MaxRadius, MaxCollisionPoint);
             _collisionList.Add(model);
         }
-        _collisionList.Sort((p1, p2) => p1.Radius.CompareTo(p2.Radius));
-        collisionIndex = 0;
     }
 
     private void Update() {
@@ -122,7 +133,7 @@ public class VoiceWave : MonoBehaviour {
             Debug.LogFormat("VoiceWave RightLink.ArcStatus {0}", RightLink.ArcStatus(Arc));
         }*/
         if (RightLink != null && RightLink.ArcStatus(Arc) == ArcEndPointStatus.ArcEndPointStatusShrinking) {
-            (bool collision, Vector2 collisionPoint) = GeoLib.FindOneArcSegmentCollision(Arc, RightLink.Segment);
+            (bool collision, Vector2 collisionPoint) = GeoLib.FindOneArcSegmentCollision(Arc, RightLink.LinkWall.Seg);
             if (collision) {
                 double newAngle = GeoLib.CalculateAngle(Arc.Center, collisionPoint);
                 double newAngleDelta = newAngle - Arc.Angle.StartAngle;
@@ -150,7 +161,7 @@ public class VoiceWave : MonoBehaviour {
             Debug.LogFormat("VoiceWave LeftLink.ArcStatus {0}", LeftLink.ArcStatus(Arc));
         }*/
         if (LeftLink != null && LeftLink.ArcStatus(Arc) == ArcEndPointStatus.ArcEndPointStatusShrinking) {
-            (bool collision, Vector2 collisionPoint) = GeoLib.FindOneArcSegmentCollision(Arc, LeftLink.Segment);
+            (bool collision, Vector2 collisionPoint) = GeoLib.FindOneArcSegmentCollision(Arc, LeftLink.LinkWall.Seg);
             if (collision) {
                 double newAngle = GeoLib.CalculateAngle(Arc.Center, collisionPoint);
                 double newAngleDelta = Arc.Angle.EndAngle - newAngle;
@@ -170,9 +181,20 @@ public class VoiceWave : MonoBehaviour {
             }
         }
 
-        // Debug.LogFormat("VoiceWave {0} Update With Center {1}", gameObject.name, Arc.Center);
-        while (collisionIndex < _collisionList.Count && Arc.Radius > _collisionList[collisionIndex].Radius) {
-            VoiceCollisionModel model = _collisionList[collisionIndex];
+        if (!IsStaticWave()) {
+            Debug.LogFormat("VoiceWave {0} is not static, reexamine", gameObject.name);
+            ExamineCollision();
+        }
+        foreach (VoiceCollisionModel model in _collisionList) {
+            if (LeftLink != null && LeftLink.LinkWall == model.Target) {
+                continue;
+            }
+            if (RightLink != null && RightLink.LinkWall == model.Target) {
+                continue;
+            }
+            if (GeoLib.SmallerThan(Arc.Radius, model.MinRadius) || GeoLib.GreaterThan(Arc.Radius, model.MaxRadius)) {
+                continue;
+            }
             Wall collisionWall = model.Target;
             SegmentModel seg = model.Target.Seg;
             Debug.LogFormat("VoiceWave {0} enter collision model with seg {1}", gameObject.name, seg.Description());
@@ -180,7 +202,6 @@ public class VoiceWave : MonoBehaviour {
             collisionWall.OnWaveWillCollide(this);
             if (!collisionWall.ShouldSplitOnCollision(this)) {
                 Debug.LogFormat("VoiceWave {0} does not split with seg {1}", gameObject.name, seg.Description());
-                collisionIndex++;
                 continue;
             }
 
@@ -192,14 +213,14 @@ public class VoiceWave : MonoBehaviour {
                 continue;
             }
 
-            double reflectedCollisionAngle = GeoLib.CalculateAngle(reflectedRay.Origin, model.collisionPoint);
+            double reflectedCollisionAngle = GeoLib.CalculateAngle(reflectedRay.Origin, model.MinCollisionPoint);
 
             ArcModel reflectedArc = new ArcModel(reflectedRay.Origin, Arc.Radius, reflectedCollisionAngle, 0f);
             VoiceWave reflectedWave = CreateWaveFromSelf(reflectedArc, collisionWall);
             Debug.LogFormat("Arc ReflectedArc reflected. Arc {0}, \r\n Reflected {1}",
                              Arc.Description(), reflectedArc.Description());
 
-            double collisionAngle = GeoLib.CalculateAngle(Arc.Center, model.collisionPoint);
+            double collisionAngle = GeoLib.CalculateAngle(Arc.Center, model.MinCollisionPoint);
             bool shouldDestroy = false;
             if (GeoLib.isEqual(collisionAngle, Arc.Angle.StartAngle)) {
                 ArcLinkModel linkModel = new ArcLinkModel();
@@ -208,7 +229,7 @@ public class VoiceWave : MonoBehaviour {
                 linkModel.LeftArc = Arc;
                 linkModel.RightArc = reflectedArc;
                 linkModel.SetRightExpand();
-                linkModel.Segment = collisionWall.Seg;
+                linkModel.LinkWall = collisionWall;
                     
                 Debug.LogFormat("Arc ReflectedArc Right Link Created.");
                 reflectedWave.gameObject.name = "RightReflected";
@@ -219,7 +240,7 @@ public class VoiceWave : MonoBehaviour {
                 linkModel.LeftArc = reflectedArc;
                 linkModel.RightArc = Arc;
                 linkModel.SetLeftExpand();
-                linkModel.Segment = collisionWall.Seg;
+                linkModel.LinkWall = collisionWall;
                 Debug.LogFormat("Arc ReflectedArc Left Link Created.");
                 reflectedWave.gameObject.name = "LeftReflected";
             } else {
@@ -233,7 +254,7 @@ public class VoiceWave : MonoBehaviour {
                 twoLinkModel.LeftArc = splitArcTwo;
                 twoLinkModel.RightArc = reflectedArc;
                 twoLinkModel.SetRightExpand();
-                twoLinkModel.Segment = collisionWall.Seg;
+                twoLinkModel.LinkWall = collisionWall;
 
                 ArcLinkModel oneLinkModel = new ArcLinkModel();
                 VoiceWave splitWaveOne = CreateWaveFromSelf(splitArcOne, collisionWall);
@@ -242,7 +263,7 @@ public class VoiceWave : MonoBehaviour {
                 oneLinkModel.LeftArc = reflectedArc;
                 oneLinkModel.RightArc = splitArcOne;
                 oneLinkModel.SetLeftExpand();
-                oneLinkModel.Segment = collisionWall.Seg;
+                oneLinkModel.LinkWall = collisionWall;
 
                 Debug.LogFormat("Arc Splitted: Right {0}, \r\nLeft {1}.", splitArcTwo.Description(), splitArcOne.Description());
 
@@ -255,14 +276,14 @@ public class VoiceWave : MonoBehaviour {
                 Debug.LogFormat("Arc Double Reflected; Self {0} destroyed.", Arc.Description());
                 Discard();
             }
-            collisionIndex++;
         }
 
         ExamineMicrophoneCollision(beforeRadius, afterRadius);
         ExamineNpcCollision(beforeRadius, afterRadius);
 
-        if (RuntimeStrength <= 0)
+        if (RuntimeStrength <= 0) {
             Destroy(gameObject);
+        }
     }
 
     private void ExamineMicrophoneCollision(double beforeRadius, double afterRadius) {
@@ -328,6 +349,10 @@ public class VoiceWave : MonoBehaviour {
         return true;
     }
 
+    public bool IsStaticWave() {
+        return LeftLink == null && RightLink == null;
+    }
+
     public void Expand(double RadDelta) {
         if (RadDelta < 0) {
             Debug.LogAssertionFormat("Arc Expand delta {0} < 0", RadDelta);
@@ -344,8 +369,7 @@ public class VoiceWave : MonoBehaviour {
         newWave.Arc = newArc;
         newWave.ExpansionSpeed = ExpansionSpeed;
         newWave.MaximumRadius = MaximumRadius;
-
-        newWave.sourceWall = collisionWall;
+        newWave.WallBanList.Add(collisionWall);
         return newWave;
     }
 

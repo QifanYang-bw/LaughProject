@@ -9,11 +9,11 @@ public enum ArcEndPointStatus {
     ArcEndPointStatusShrinking = 2
 }
 
-[Serializable]
+//[Serializable]
 public class ArcLinkModel {
     public bool isBroken;
     public ArcModel LeftArc, RightArc;
-    public SegmentModel Segment;
+    public Wall LinkWall;
     public ArcEndPointStatus LeftStatus, RightStatus;
 
     public void SetLeftExpand() {
