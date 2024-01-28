@@ -1,4 +1,5 @@
 using Assets.Scripts;
+using Assets.Scripts.Gameplay.Model;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -49,6 +50,7 @@ public class Wall : MonoBehaviour {
             return;
         }
         LevelManager.instance.AddWall(this);
+        GetComponent<SpriteRenderer>().sprite = AssetHelper.instance.WallSprites[(int)Type];
     }
 
     private WallTypes GetNextType(VoiceWave voiceWave)
@@ -99,7 +101,7 @@ public class Wall : MonoBehaviour {
     private void UpdateType(WallTypes type)
     {
         Type = type;
-        // todo lwttai update ui
+        GetComponent<SpriteRenderer>().sprite = AssetHelper.instance.WallSprites[(int)Type];
     }
 
     public void OnWaveWillCollide(VoiceWave wave) {

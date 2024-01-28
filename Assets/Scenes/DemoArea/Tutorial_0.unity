@@ -1381,6 +1381,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7817003758326045075, guid: 4801621f11017464281577ad8fa38a2b,
+        type: 3}
+      propertyPath: Type
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7817003758326045075, guid: 4801621f11017464281577ad8fa38a2b,
+        type: 3}
+      propertyPath: EnhanceStrength
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 7871852081613950846, guid: 4801621f11017464281577ad8fa38a2b,
         type: 3}
       propertyPath: m_Size.x
@@ -2092,6 +2102,16 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 394361965}
     m_Modifications:
+    - target: {fileID: 1656081498432363613, guid: 34f54ef0c5587dc49a25a38a0d13cd0b,
+        type: 3}
+      propertyPath: SoundType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1656081498432363613, guid: 34f54ef0c5587dc49a25a38a0d13cd0b,
+        type: 3}
+      propertyPath: SoundStrength
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 2054644874384721788, guid: 34f54ef0c5587dc49a25a38a0d13cd0b,
         type: 3}
       propertyPath: m_LocalPosition.x

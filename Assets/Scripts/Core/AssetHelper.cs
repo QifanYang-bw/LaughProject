@@ -31,7 +31,8 @@ namespace Assets.Scripts {
         public GameObject LevelCanvas;
         public List<Material> BackgroundMaterials;
         public List<Material> WaveMaterials;
-        public List<Sprite> SpeakerMaterials;
+        public List<Sprite> SpeakerSprites;
+        public List<Sprite> WallSprites;
         public GameObject WavePrefab;
 
         public List<string> TutorialSceneNames;

@@ -92,9 +92,16 @@ MonoBehaviour:
   WaveMaterials:
   - {fileID: 2100000, guid: 4d0b39540fbcac149900145393328056, type: 2}
   - {fileID: 2100000, guid: 094051e26931bbe4ea3f69f377082bfc, type: 2}
-  SpeakerMaterials:
+  SpeakerSprites:
   - {fileID: 21300000, guid: 74cdb3906d6b38c4fafba72a508d3d6f, type: 3}
   - {fileID: 21300000, guid: 7b9d0fc0641339e4b95317cdad2c57ae, type: 3}
+  WallSprites:
+  - {fileID: 21300000, guid: dfb34b8b0504d604f9e12328ce3f0056, type: 3}
+  - {fileID: 21300000, guid: 9dade895e12870d4d996e4e9ff184ba3, type: 3}
+  - {fileID: 21300000, guid: 989902a4f33e6c145be135f3ce4f1e36, type: 3}
+  - {fileID: 21300000, guid: 6de22423d90c3ce489bf99afd42cb121, type: 3}
+  - {fileID: 21300000, guid: e462f653672c3da41b7fe337aa12dc52, type: 3}
+  - {fileID: 21300000, guid: fce8588419bed404eb57f7ef7a5a4434, type: 3}
   WavePrefab: {fileID: 6425850899133785793, guid: 81fabb9f6205b934980770447ec12170,
     type: 3}
   TutorialSceneNames:

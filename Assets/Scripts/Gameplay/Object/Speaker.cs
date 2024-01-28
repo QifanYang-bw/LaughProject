@@ -10,7 +10,7 @@ public class Speaker : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        GetComponent<SpriteRenderer>().sprite = AssetHelper.instance.SpeakerMaterials[(int)SoundType];
+        GetComponent<SpriteRenderer>().sprite = AssetHelper.instance.SpeakerSprites[(int)SoundType];
     }
 
     // Update is called once per frame
