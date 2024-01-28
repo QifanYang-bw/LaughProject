@@ -1,11 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Unity.Burst.Intrinsics;
-using Unity.Mathematics;
-using UnityEditor.VersionControl;
 using UnityEngine;
-using UnityEngine.U2D.IK;
-using UnityEngine.UIElements;
 
 public class GeoLib {
     public static double DotProduct(Vector2 a, Vector2 b) {

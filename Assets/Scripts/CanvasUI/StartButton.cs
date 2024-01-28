@@ -11,10 +11,10 @@ namespace Assets.Scripts.CanvasUI {
         }
 
         private void StartGame() {
-            if (GameManager.Instance.isLevelSelectionDisabled) {
-                GameManager.Instance.StartGame();
-            } else {
+            if (GameManager.Instance.CanShowLevelSelection) {
                 GameManager.Instance.GoToLevelSelection();
+            } else {
+                GameManager.Instance.StartGame();
             }
         }
     }

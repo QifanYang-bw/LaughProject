@@ -55,16 +55,14 @@ MonoBehaviour:
     Difficulty: 0
   levelProgress: 0
   historyMaximumLevelProgress: 0
-  isEditorModeOn: 0
-  enableWellColliderDetection: 0
-  MainLevelSceneIndex: 4
-  TotalLevel: 11
-  LevelSelectionSceneIndex: 12
-  CreditSceneIndex: 13
-  NormalDifficultyBulletTimeCostPerSec: 0.5
-  HardDifficultyBulletTimeCostPerSec: 1
+  isEditorModeOn: 1
+  TitleSceneIndex: 0
+  LevelSelectionSceneIndex: 1
+  CreditSceneIndex: 2
+  BeginLevelIndex: 3
+  EndLevelIndex: 11
+  CanShowLevelSelection: 0
   state: 0
-  isLevelSelectionDisabled: 1
 --- !u!114 &6397378926993368453
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -113,9 +111,9 @@ MonoBehaviour:
   - Level_7
   levelScenes:
   - TitleScreenScene
-  - Tutorial_0
-  - Tutorial_1
-  - Tutorial_2
+  - LevelSelection
+  - Credits
+  - Level_0
   - Level_1
   - Level_2
   - Level_3
@@ -123,10 +121,8 @@ MonoBehaviour:
   - Level_5
   - Level_6
   - Level_7
-  - Ending
-  - LevelSelection
-  - Credits
-  levelMusic: 0200000000000000000000000000000000000000000000000000000001000000010000000100000001000000020000000200000002000000
+  - Level_8
+  levelMusic: 020000000200000002000000010000000100000001000000010000000100000001000000010000000100000002000000
 --- !u!114 &3318230115090820234
 MonoBehaviour:
   m_ObjectHideFlags: 0

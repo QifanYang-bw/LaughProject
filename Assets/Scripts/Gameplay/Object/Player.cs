@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Assets.Scripts;
 using Assets.Scripts.Gameplay.Model;
 using Unity.Mathematics;

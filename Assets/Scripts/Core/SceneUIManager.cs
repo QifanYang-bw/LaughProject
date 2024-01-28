@@ -86,7 +86,7 @@ namespace Assets.Scripts {
             _pnlMain.gameObject.SetActive(false);
             _pnlConfig.gameObject.SetActive(false);
             _pnlTotalScore.gameObject.SetActive(false);
-            _btnLevelSelection.gameObject.SetActive(!GameManager.Instance.isLevelSelectionDisabled);
+            _btnLevelSelection.gameObject.SetActive(true);
         }
 
         public void Retry() {
@@ -156,7 +156,7 @@ namespace Assets.Scripts {
             GameManager.Instance.GoToLevelSelection();
         }
 
-        #region BulletTime
+        /*#region BulletTime
         /// <summary>
         /// Enter bullet time
         /// </summary>
@@ -182,7 +182,7 @@ namespace Assets.Scripts {
         {
             BulletTimeSlider.value = val;
         }
-        #endregion
+        #endregion*/
 
     }
 }

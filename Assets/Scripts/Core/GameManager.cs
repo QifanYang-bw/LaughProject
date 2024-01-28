@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
 using static Assets.Scripts.SceneUIManager;
 
@@ -13,20 +14,20 @@ public class GameManager : Singleton<GameManager> {
     public int levelProgress = 0;
     public int historyMaximumLevelProgress = 0;
     public bool isEditorModeOn;
-    public bool enableWellColliderDetection;
 
-    public int MainLevelSceneIndex = 4;
-    public int TotalLevel = 11;
-    public int LevelSelectionSceneIndex = 12;
-    public int CreditSceneIndex = 13;
-    public float NormalDifficultyBulletTimeCostPerSec = 0.5f;
-    public float HardDifficultyBulletTimeCostPerSec = 1f;
+    public int TitleSceneIndex = 0;
+    public int LevelSelectionSceneIndex = 1;
+    public int CreditSceneIndex = 2;
+    public int BeginLevelIndex = 3;
+    public int EndLevelIndex = 11;
+
+    public bool CanShowLevelSelection;
+
     public UserDataModel UserDataModel;
 
     private GameObject _globalLevelCanvas;
     
     public GameState state;
-    public bool isLevelSelectionDisabled = true;
 
     public new void Awake() {
         base.Awake();
@@ -52,7 +53,7 @@ public class GameManager : Singleton<GameManager> {
 
     public void Update() {
         if (isEditorModeOn) {
-            if (Input.GetKeyUp(KeyCode.A)) {
+            if (Input.GetKeyUp(KeyCode.N)) {
                 GoNextLevel();
             }
         }
@@ -68,16 +69,21 @@ public class GameManager : Singleton<GameManager> {
         GameObject _globalLevelCanvas = Instantiate(AssetHelper.instance.LevelCanvas);
         DontDestroyOnLoad(_globalLevelCanvas);
 
-        levelProgress = 1;
         SceneUIManager.Instance.ShowLevelTransition(LoadLevel);
+        state = GameState.Game;
+        levelProgress = BeginLevelIndex;
+        if (levelProgress >= historyMaximumLevelProgress) {
+            historyMaximumLevelProgress = levelProgress;
+        }
+        CanShowLevelSelection = false;
     }
 
     //当前关卡通关，跳到下一关卡并切换plane的texture
     public void CompleteLevel(LevelScoreModel scoreData) {
-        if (!AssetHelper.instance.ShouldShowScoreBoard(levelScenes()[levelProgress]) && scoreData != null) {
+        if (AssetHelper.instance.ShouldShowScoreBoard(levelScenes()[levelProgress]) && scoreData != null) {
             state = GameState.ScoreBoard;
 
-            Debug.LogFormat("Level Passed, Score is ( {1}) = {2}",
+            Debug.LogFormat("Level Passed, Score is ({1}) = {2}",
                 scoreData.RemainingTimeScore(),
                 scoreData.TotalScore()
             );
@@ -96,12 +102,13 @@ public class GameManager : Singleton<GameManager> {
     }
 
     public void GoNextLevel() {
+        Assert.IsFalse(levelProgress < BeginLevelIndex || levelProgress > EndLevelIndex, $"levelProgress {levelProgress} out of range");
         state = GameState.Game;
         levelProgress += 1;
         if (levelProgress >= historyMaximumLevelProgress) {
             historyMaximumLevelProgress = levelProgress;
         }
-        if (levelProgress >= TotalLevel) {
+        if (levelProgress >= EndLevelIndex) {
             GoPrologue();
             return;
         }
@@ -109,18 +116,13 @@ public class GameManager : Singleton<GameManager> {
     }
 
     public void GoPrologue() {
-        //state = GameState.Prologue;
-        //levelProgress = TotalLevel;
-        //SceneChange(levelScenes()[levelProgress]);
-
-        //SceneUIManager.Instance.ClearCanvas();
-        //Debug.LogFormat("GameManager load ending scene", levelScenes()[levelProgress]);
         GoTitleScreen();
     }
 
     public void GoTitleScreen() {
         state = GameState.Title;
-        levelProgress = 0;
+        levelProgress = TitleSceneIndex;
+        Debug.LogFormat("GameManager load title screen {0} {1}", levelProgress, levelScenes()[levelProgress]);
         SceneChange(levelScenes()[levelProgress]);
 
         SceneUIManager.Instance.ClearCanvas();
@@ -146,9 +148,6 @@ public class GameManager : Singleton<GameManager> {
     }
 
     public void LoadLevel() {
-        if (levelProgress >= MainLevelSceneIndex) {
-            isLevelSelectionDisabled = false;
-        }
         SceneChange(levelScenes()[levelProgress]);
         //Material backgroundMaterial = AssetHelper.instance.BackgroundMaterials[levelProgress];
         //if (backgroundMaterial != null) {
@@ -157,7 +156,6 @@ public class GameManager : Singleton<GameManager> {
         //}
 
         SceneUIManager.Instance.RefreshCanvas();
-        Debug.LogFormat("GameManager load scene {0}", levelScenes()[levelProgress]);
     }
 
     private void SceneChange(string sceneName) {
@@ -168,6 +166,7 @@ public class GameManager : Singleton<GameManager> {
         }
         AudioManager.Instance.PlayMusic(AssetHelper.instance.levelMusic[sceneIndex]);
         SceneUIManager.Instance.ClearCanvas();
+        Debug.LogFormat("GameManager load scene {0}", sceneName);
         SceneManager.LoadScene(sceneName);
     }
 

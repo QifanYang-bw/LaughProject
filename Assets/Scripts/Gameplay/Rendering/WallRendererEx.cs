@@ -1,6 +1,5 @@
 using System.Drawing;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
 [RequireComponent(typeof(Wall))]
 public class WallRendererEx : MonoBehaviour {

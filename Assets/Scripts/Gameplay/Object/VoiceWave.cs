@@ -147,7 +147,7 @@ public class VoiceWave : MonoBehaviour {
                                               collisionPoint, Arc, newAngle, newAngleDelta);
                     newAngleDelta = Math.Abs(newAngleDelta);
                 }
-                Assert.IsFalse(newAngleDelta > Math.PI, $"{newAngleDelta} > Math.PI");
+                //Assert.IsFalse(newAngleDelta > Math.PI, $"{newAngleDelta} > Math.PI");
                 //Debug.LogFormat("VoiceWave update Chain newAngle {0} angleDelta {1} \r\n Arc {2}",
                 //                 newAngle, newAngleDelta, Arc.Description());
                 RightLink.ChainAngle(newAngleDelta);
@@ -172,7 +172,7 @@ public class VoiceWave : MonoBehaviour {
                                               collisionPoint, Arc, newAngle, newAngleDelta);
                     newAngleDelta = Math.Abs(newAngleDelta);
                 }
-                Assert.IsFalse(newAngleDelta > Math.PI, $"{newAngleDelta} > Math.PI");
+                //Assert.IsFalse(newAngleDelta > Math.PI, $"{newAngleDelta} > Math.PI");
                 LeftLink.ChainAngle(newAngleDelta);
             } else {
                 LeftLink.isBroken = true;

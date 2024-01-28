@@ -34,39 +34,12 @@ namespace Assets.Scripts {
         public List<Sprite> SpeakerMaterials;
         public GameObject WavePrefab;
 
-        public List<string> TutorialSceneNames = new List<string>
-        {
-            "Tutorial_0",
-            "Tutorial_1",
-            "Tutorial_2",
-        };
+        public List<string> TutorialSceneNames;
 
-        public List<string> GameLevelSceneNames = new List<string>
-        {
-            "Level_1",
-            "Level_2",
-            "Level_3",
-            "Level_4",
-            "Level_5",
-            "Level_6",
-            "Level_7",
-        };
+        public List<string> GameLevelSceneNames;
 
         //场景名称列表
-        public List<string> levelScenes = new List<string> {
-            "TitleScreenScene",
-            "Tutorial_0",
-            "Tutorial_1",
-            "Tutorial_2",
-            "Level_1",
-            "Level_2",
-            "Level_3",
-            "Level_4",
-            "Level_5",
-            "Level_6",
-            "Level_7",
-            "Ending"
-        };
+        public List<string> levelScenes;
 
         //BGM列表
         public List<MusicType> levelMusic = new List<MusicType> {
@@ -89,12 +62,7 @@ namespace Assets.Scripts {
         }
 
         public bool ShouldShowScoreBoard(string sceneName) {
-            int sceneIndex = levelScenes.IndexOf(sceneName);
-            if (sceneIndex == -1) {
-                Debug.LogFormat("Scene {0} not found", sceneName);
-                return false;
-            }
-            return sceneIndex <= 3;
+            return false;
         }
     }
 }

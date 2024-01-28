@@ -66,8 +66,8 @@ namespace Assets.Scripts {
 
         private void Update() {
             //if (GameManager.Instance.state != GameState.Game || isPaused) {
-                // Not in game (e.g. ScoreBoard) or paused, disable keyboard Interactions
-                //Debug.LogFormat("[bullettime] {0} {1}", GameManager.Instance.state, isPaused);
+            // Not in game (e.g. ScoreBoard) or paused, disable keyboard Interactions
+            //Debug.LogFormat("[bullettime] {0} {1}", GameManager.Instance.state, isPaused);
             //    return;
             //}
         }
@@ -80,7 +80,7 @@ namespace Assets.Scripts {
         }
 
         public void Pass() {
-            PauseLevel();
+            // PauseLevel();
             LevelScoreModel scoreData = GetScore();
             GameManager.Instance.CompleteLevel(scoreData);
         }
@@ -122,9 +122,6 @@ namespace Assets.Scripts {
             curElapsedTime = Time.time;
         }
 
-        public void ResetAnimator() {
-        }
-
         public LevelScoreModel GetScore() {
             return new LevelScoreModel(
                 Time.time - curElapsedTime
@@ -135,8 +132,8 @@ namespace Assets.Scripts {
         {
             if (!NpcList.TrueForAll(npc => npc.IsLaughing))
                 return;
-            Debug.Log("level pass!");
-            // todo lwttai
+            Debug.LogFormat("Level {0} Pass!", GameManager.Instance.currentLevelName());
+            Pass();
         }
     }
 }

@@ -487,7 +487,7 @@ PrefabInstance:
     - target: {fileID: 58371303186124127, guid: 2026c86dd135a3044b4520fc03ecaf2d,
         type: 3}
       propertyPath: isEditorModeOn
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1681815438678575939, guid: 2026c86dd135a3044b4520fc03ecaf2d,
         type: 3}
