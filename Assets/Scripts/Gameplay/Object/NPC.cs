@@ -21,6 +21,7 @@ public class NPC : MonoBehaviour
 
     public void ResetState() {
         MoodValue = initialMoodValue;
+        UpdateByMood();
     }
 
     public void OnVoiceWaveHit(VoiceWave voiceWave)

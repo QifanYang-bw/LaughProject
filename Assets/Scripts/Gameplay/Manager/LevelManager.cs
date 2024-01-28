@@ -62,8 +62,7 @@ namespace Assets.Scripts {
                 SceneUIManager.Instance.OnResumeLevel += ResumeLevel;
             }
 
-            
-            //PauseLevel();
+            SceneUIManager.Instance.Resume();
         }
 
         private void Update() {
