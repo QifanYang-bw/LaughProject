@@ -22,6 +22,7 @@ namespace Assets.Scripts {
         public List<Wall> WallList;
         public List<NPC> NpcList;
         public List<Microphone> MicrophoneList;
+        public List<Switch> SwitchList;
 
         private void Awake() {
             instance = this;
@@ -40,8 +41,9 @@ namespace Assets.Scripts {
                 npc.OnMoodChangEvent += CheckAllNpcLaugh;
             }
             MicrophoneList.AddRange(objectParent.GetComponentsInChildren<Microphone>());
+            SwitchList.AddRange(objectParent.GetComponentsInChildren<Switch>());
 
-            Debug.LogFormat("LevelManager Microphones: {0}, NPCs: {1}", MicrophoneList.Count, NpcList.Count);
+            Debug.LogFormat("LevelManager Microphones: {0}, NPCs: {1}, Switches: {2}", MicrophoneList.Count, NpcList.Count, SwitchList.Count);
 
             curElapsedTime = Time.time;
             if (GameManager.Instance.UserDataModel.levelScoreDict.ContainsKey(GameManager.Instance.currentLevelName())) {

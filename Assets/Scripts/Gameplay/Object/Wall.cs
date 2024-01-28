@@ -30,6 +30,8 @@ public class Wall : MonoBehaviour {
 
     public float imageSizeRatio = 3f;
 
+    public float RotateAngle = 90f;
+
 
     private void Awake() {
         float boardHalfLength = transform.lossyScale.x * .5f * imageSizeRatio;
@@ -118,6 +120,11 @@ public class Wall : MonoBehaviour {
             Debug.Log("wall Shattered");
             Destroy(gameObject);
         }
+    }
+
+    public void TriggerRotate()
+    {
+        transform.Rotate(0, 0, RotateAngle);
     }
 
 }

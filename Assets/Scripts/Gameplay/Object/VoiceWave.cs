@@ -52,6 +52,8 @@ public class VoiceWave : MonoBehaviour {
     private List<NPC> _npcList;
     [SerializeField]
     private List<Microphone> _microphoneList;
+    [SerializeField]
+    private List<Switch> _switchList;
 
     public ArcLinkModel LeftLink, RightLink;
 
@@ -69,6 +71,8 @@ public class VoiceWave : MonoBehaviour {
                                             new List<NPC>(transform.parent.GetComponentsInChildren<NPC>());
         _microphoneList = LevelManager.instance != null ? new List<Microphone>(LevelManager.instance.MicrophoneList) :
                           new List<Microphone>(transform.parent.GetComponentsInChildren<Microphone>());
+        _switchList = LevelManager.instance != null ? new List<Switch>(LevelManager.instance.SwitchList) :
+            new List<Switch>(transform.parent.GetComponentsInChildren<Switch>());
 
         rendererEx = GetComponent<VoiceWaveLineRendererEx>();
         rendererEx.arc = Arc;
@@ -286,6 +290,7 @@ public class VoiceWave : MonoBehaviour {
 
         ExamineMicrophoneCollision(beforeRadius, afterRadius);
         ExamineNpcCollision(beforeRadius, afterRadius);
+        ExamineSwitchCollision(beforeRadius, afterRadius);
 
         if (RuntimeStrength <= 0) {
             Destroy(gameObject);
@@ -327,6 +332,29 @@ public class VoiceWave : MonoBehaviour {
             }
         }
         _npcList.RemoveAll(item => hitList.Contains(item));
+    }
+
+    private void ExamineSwitchCollision(double beforeRadius, double afterRadius)
+    {
+        if (_switchList.Count == 0)
+            return;
+        List<Switch> hitList = new List<Switch>();
+        foreach (Switch ns in _switchList)
+        {
+            (bool collision, double dist) = GeoLib.FindPointArcCollision(ns.transform.position, Arc);
+            //Debug.LogFormat("ExamineSwitchCollision hit ns {0} res {1} dist {2}", ns.gameObject.name, collision, dist);
+            if (!collision)
+            {
+                continue;
+            }
+            if (dist - beforeRadius > -1e-5 && afterRadius - dist > -1e-5)
+            {
+                Debug.LogFormat("ExamineSwitchCollision hit npc {0}", ns.gameObject.name);
+                ns.OnVoiceWaveHit(this);
+                hitList.Add(ns);
+            }
+        }
+        _switchList.RemoveAll(item => hitList.Contains(item));
     }
 
     public bool IsRemovable() {
