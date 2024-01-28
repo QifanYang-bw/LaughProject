@@ -59,13 +59,12 @@ public class VoiceWave : MonoBehaviour {
 
     private void Awake() {
         WallBanList = new List<Wall>();
+        RuntimeStrength = InitialStrength;
     }
 
     private void Start() {
         Arc.Center = transform.position;
         Arc.Load();
-
-        RuntimeStrength = InitialStrength;
 
         _npcList = LevelManager.instance != null ? new List<NPC>(LevelManager.instance.NpcList) :
                                             new List<NPC>(transform.parent.GetComponentsInChildren<NPC>());
