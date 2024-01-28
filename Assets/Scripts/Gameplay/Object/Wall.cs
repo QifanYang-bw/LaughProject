@@ -28,9 +28,11 @@ public class Wall : MonoBehaviour {
     // glass
     public float DestoryGlassLimitStrength = 3.0f;
 
+    public float imageSizeRatio = 3f;
+
 
     private void Awake() {
-        float boardHalfLength = transform.lossyScale.x * .5f;
+        float boardHalfLength = transform.lossyScale.x * .5f * imageSizeRatio;
         Vector2 boardHalfSizeShiftVec = new Vector2(boardHalfLength * (float)Math.Cos(GeoLib.ConvertDegreesToRadians(transform.rotation.eulerAngles.z)),
                                                     boardHalfLength * (float)Math.Sin(GeoLib.ConvertDegreesToRadians(transform.rotation.eulerAngles.z)));
 

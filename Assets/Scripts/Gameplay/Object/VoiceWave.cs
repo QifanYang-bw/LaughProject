@@ -80,8 +80,7 @@ public class VoiceWave : MonoBehaviour {
                 continue;
             }
             (bool collision, Vector2 collisionPoint, double radius) = GeoLib.ArcCollisionRadiusWithSegment(Arc, wall.Seg);
-            Debug.LogFormat("Arc ExamineCollision with seg {0}, res {1}, rad {2}",
-                            Arc.Description(), collision, radius);
+            Debug.LogFormat("VoiceWave ExamineCollision with seg {0}, res {1}, rad {2}", Arc.Description(), collision, radius);
             if (!collision || collision && (radius > MaximumRadius || radius < Arc.Radius)) {
                 continue;
             }

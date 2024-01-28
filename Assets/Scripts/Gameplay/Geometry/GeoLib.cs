@@ -4,6 +4,8 @@ using Unity.Burst.Intrinsics;
 using Unity.Mathematics;
 using UnityEditor.VersionControl;
 using UnityEngine;
+using UnityEngine.U2D.IK;
+using UnityEngine.UIElements;
 
 public class GeoLib {
     public static bool isEqual(double a, double b) {
@@ -75,39 +77,6 @@ public class GeoLib {
         // Debug.LogFormat("IsAngleWithinArc {0} StartAngle {1} EndAngle {2} angle {3}", res, StartAngle, EndAngle, angle);
         return res;
     }
-    public static bool IsSegmentWithinArc(ArcModel arc, SegmentModel seg) {
-        double segAAngle = GeoLib.CalculateAngle(arc.Center, seg.PointA);
-        double segBAngle = GeoLib.CalculateAngle(arc.Center, seg.PointB);
-
-        if (segAAngle - segBAngle > Math.PI) {
-            segBAngle += Math.PI * 2f;
-        }
-        if (segBAngle - segAAngle > Math.PI) {
-            segAAngle += Math.PI * 2f;
-        }
-        if (segBAngle < segAAngle) {
-            (segAAngle, segBAngle) = (segBAngle, segAAngle);
-        }
-
-        segAAngle = GeoLib.NormalizeAngle(segAAngle);
-        segBAngle = GeoLib.NormalizeAngle(segBAngle);
-
-        double StartAngle = arc.Angle.StartAngle;
-        double EndAngle = arc.Angle.StartAngle + arc.Angle.AngleRange;
-
-        // Debug.LogFormat("IsSegmentWithinArc segA {0} segB {1} arcA {2} arcB {3}", segAAngle, segBAngle, StartAngle, EndAngle);
-        bool res;
-        res = segAAngle >= StartAngle && segAAngle <= EndAngle || segBAngle >= StartAngle && segBAngle <= EndAngle ||
-              segAAngle <= StartAngle && segBAngle >= EndAngle;
-        if (EndAngle > Math.PI * 2f) {
-            segAAngle += Math.PI * 2f;
-            segBAngle += Math.PI * 2f;
-            // Debug.LogFormat("IsSegmentWithinArc new segA {0} segB {1} arcA {2} arcB {3}", segAAngle, segBAngle, StartAngle, EndAngle);
-            res = res || (segAAngle >= StartAngle && segAAngle <= EndAngle || segBAngle >= StartAngle && segBAngle <= EndAngle ||
-                  segAAngle <= StartAngle && segBAngle >= EndAngle || segAAngle >= StartAngle && segBAngle >= EndAngle);
-        }
-        return res;
-    }
 
     public static (bool, Vector2) FindSegToSegIntersection(SegmentModel LineA, SegmentModel LineB) {
         Vector2 linePoint1 = LineA.PointA;
@@ -146,44 +115,25 @@ public class GeoLib {
         return FindSegToSegIntersection(lineSegment, raySeg);
     }
     public static (bool, Vector2, double, double) PerpendicularIntersection(Vector2 p, SegmentModel seg) {
-        // Calculate the directional vectors of the line segment
-        double dx = seg.PointB.x - seg.PointA.x;
-        double dy = seg.PointB.y - seg.PointA.y;
+        Vector2 bc = seg.PointB - seg.PointA;
+        Vector2 ba = p - seg.PointA;
+        Vector2 nBC = bc.normalized;
+        float dBP = Vector3.Dot(ba, nBC);
+        Vector2 intersection = seg.PointA + dBP * nBC;
 
-        // Calculate the unit vector of the line segment
-        double length = Math.Sqrt(dx * dx + dy * dy);
-        double ux = dx / length;
-        double uy = dy / length;
+        // Debug.LogFormat("PerpendicularIntersection intersection {0}, seg {1}", intersection, seg.Description());
 
-        // Project the point p onto the line segment
-        double t = (p.x - seg.PointA.x) * ux + (p.y - seg.PointA.y) * uy;
-
-        // Check if the projection is within the line segment
-        if (t >= 0 && t <= length) {
-            // Calculate the intersection point
-            Vector2 intersection = new Vector2(seg.PointA.x + (float)(t * ux), seg.PointA.y + (float)(t * uy));
-
-            // Calculate the distance between the point and the intersection
-            double dxp = intersection.x - p.x;
-            double dyp = intersection.y - p.y;
-            double distance = Math.Sqrt(dxp * dxp + dyp * dyp);
-
-            // Calculate the angle
-            double angle = NormalizeAngle(Math.Atan2(dyp, dxp));
-            // Debug.LogFormat("PerpendicularIntersection dxp {0}, dyp {1}, angle {2}", dxp, dyp, angle);
-
-            return (true, intersection, angle, distance);
+        if (intersection.x - Math.Min(seg.PointA.x, seg.PointB.x) > -1e-6 && Math.Max(seg.PointA.x, seg.PointB.x) - intersection.x > -1e-6 &&
+            intersection.y - Math.Min(seg.PointA.y, seg.PointB.y) > -1e-6 && Math.Max(seg.PointA.y, seg.PointB.y) - intersection.y > -1e-6) {
+            double angle = CalculateAngle(p, intersection);
+            double dist = (intersection - p).magnitude;
+            return (true, intersection, angle, dist);
         } else {
-            return (false, Vector2.zero, 0, double.PositiveInfinity);
+            return (false, Vector2.zero, 0, 0);
         }
     }
     public static (bool, Vector2, double) ArcCollisionRadiusWithSegment(ArcModel arc, SegmentModel seg) {
         Debug.LogFormat("ArcCollisionRadiusWithSegment seg {0}, arc {1}", seg.Description(), arc.Description());
-        bool inArc = IsSegmentWithinArc(arc, seg);
-        if (!inArc) {
-            Debug.LogFormat("ArcCollisionRadiusWithSegment res False");
-            return (false, Vector2.zero, double.PositiveInfinity);
-        }
 
         RayModel rayA = new RayModel(arc.Center, arc.Angle.StartAngle);
         (bool rayACollision, Vector2 rayAPoint) = RayLineSegmentIntersection(rayA, seg);
@@ -220,7 +170,7 @@ public class GeoLib {
         }
 
         if (!rayACollision && !rayBCollision && !perpCollision && !pointACollision && !pointBCollision) {
-            Debug.LogAssertionFormat("ArcCollisionRadiusWithSegment pass check but point non found: arc {0}, seg {1}", arc.Description(), seg.Description());
+            Debug.LogWarningFormat("ArcCollisionRadiusWithSegment point not found: arc {0}, seg {1}", arc.Description(), seg.Description());
             return (false, Vector2.zero, double.PositiveInfinity);
         }
         double dist = double.PositiveInfinity;
