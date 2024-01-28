@@ -79,10 +79,10 @@ public class VoiceWave : MonoBehaviour {
         rendererEx = GetComponent<VoiceWaveLineRendererEx>();
         rendererEx.arc = Arc;
 
-        if (LevelManager.instance != null) {
-            LevelManager.instance.OnLevelReset += Discard;
-            LevelManager.instance.OnSwitchMode += Discard;
-        }
+        //if (LevelManager.instance != null) {
+        //    LevelManager.instance.OnLevelReset += Discard;
+        //    LevelManager.instance.OnSwitchMode += Discard;
+        //}
 
         UpdateUIByType();
 
@@ -447,10 +447,10 @@ public class VoiceWave : MonoBehaviour {
     }
 
     private void Discard() {
-        if (LevelManager.instance != null) {
-            LevelManager.instance.OnLevelReset -= Discard;
-            LevelManager.instance.OnLevelReset -= Discard;
-        }
+        //if (LevelManager.instance != null) {
+        //    LevelManager.instance.OnLevelReset -= Discard;
+        //    LevelManager.instance.OnLevelReset -= Discard;
+        //}
 #if UNITY_EDITOR
         gameObject.SetActive(false);
 #else
