@@ -80,21 +80,22 @@ public class Player : MonoBehaviour
 
     private Vector3 GetPosDeltaRatioByInput()
     {
-        float x = 0, y = 0;
-        if (Input.GetKey(KeyCode.W))
+        Vector3 viewPos = Camera.main.WorldToViewportPoint(transform.position);
+        float x = 0, y = 0, xMargin = 0.04f, yMargin = 0.072f;
+        if (Input.GetKey(KeyCode.W) && viewPos.y <= 1 - yMargin)
         {
             y += 1;
         }
-        if (Input.GetKey(KeyCode.A))
+        if (Input.GetKey(KeyCode.A) && viewPos.x >= xMargin)
         {
             x -= 1;
 
         }
-        if (Input.GetKey(KeyCode.S))
+        if (Input.GetKey(KeyCode.S) && viewPos.y >= yMargin)
         {
             y -= 1;
         }
-        if (Input.GetKey(KeyCode.D))
+        if (Input.GetKey(KeyCode.D) && viewPos.x <= 1 - xMargin)
         {
             x += 1;
         }
