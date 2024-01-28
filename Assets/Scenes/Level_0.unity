@@ -134,7 +134,7 @@ PrefabInstance:
     - target: {fileID: 1080418600759310358, guid: 4adabaafaaf74364491198fb395ddaea,
         type: 3}
       propertyPath: MoodValue
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6426806878180638873, guid: 4adabaafaaf74364491198fb395ddaea,
         type: 3}
@@ -1194,7 +1194,7 @@ PrefabInstance:
     - target: {fileID: 1080418600759310358, guid: 4adabaafaaf74364491198fb395ddaea,
         type: 3}
       propertyPath: MoodValue
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6426806878180638873, guid: 4adabaafaaf74364491198fb395ddaea,
         type: 3}

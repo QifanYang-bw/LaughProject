@@ -222,7 +222,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MoveSpeed: 20
-  WaveRangeDegree: 20
+  WaveRangeDegree: 30
   AimAreaObj: {fileID: 2568628330937626715}
 --- !u!50 &8608349519075800656
 Rigidbody2D:
