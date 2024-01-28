@@ -9,7 +9,7 @@ public class NPC : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        UpdateByMood();
     }
 
     // Update is called once per frame
@@ -50,13 +50,19 @@ public class NPC : MonoBehaviour
 
     private void UpdateByMood()
     {
-        if (MoodValue > 0)
+        if (MoodValue > 1)
         {
-            // todo switch to angry assets
+            MoodBubble.GetComponent<Renderer>().enabled = true;
+            MoodBubble.GetComponent<SpriteRenderer>().sprite = AngrySprites;
+        }
+        else if (MoodValue < 1)
+        {
+            MoodBubble.GetComponent<Renderer>().enabled = true;
+            MoodBubble.GetComponent<SpriteRenderer>().sprite = HappySprites;
         }
         else
         {
-            // todo switch to laugh assets
+            MoodBubble.GetComponent<Renderer>().enabled = false;
         }
     }
 
@@ -69,4 +75,7 @@ public class NPC : MonoBehaviour
         get { return MoodValue <= 0; }
     }
     public event Action OnMoodChangEvent;
+    public GameObject MoodBubble;
+    public Sprite HappySprites;
+    public Sprite AngrySprites;
 }
