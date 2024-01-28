@@ -54,6 +54,8 @@ public class Player : MonoBehaviour
         //degreeZ = 10;
         var angle = Degree2Angle(degreeZ);
         arc.Angle = new ArcAngleModel(angle - Degree2Angle(WaveRangeDegree / 2), Degree2Angle(WaveRangeDegree));
+
+        GetComponent<AudioSource>().PlayOneShot(GetComponent<AudioSource>().clip);
     }
 
     private void UpdateAimAreaVisibility()

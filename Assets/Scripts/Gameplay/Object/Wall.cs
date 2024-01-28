@@ -73,7 +73,7 @@ public class Wall : MonoBehaviour {
             case WallTypes.Normal:
                 break;
             case WallTypes.Silent:
-                voiceWave.RuntimeStrength = 0;
+                voiceWave.isHidden = true;
                 break;
             case WallTypes.Enhance:
                 voiceWave.RuntimeStrength += EnhanceStrength;
