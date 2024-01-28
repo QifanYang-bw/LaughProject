@@ -101,7 +101,7 @@ public class VoiceWave : MonoBehaviour {
             }
             (bool collision, Vector2 MinCollisionPoint, double MinRadius, Vector2 MaxCollisionPoint, double MaxRadius) = GeoLib.ArcCollisionRadiusWithSegment(Arc, wall.Seg);
             Debug.LogFormat("VoiceWave ExamineCollision with seg {0}, res {1}, minPos {2}, minDist {3}, maxPos {4}, maxDist {5}",
-                             wall.Seg, collision, MinCollisionPoint, MinRadius, MaxCollisionPoint, MaxRadius);
+                             wall.Seg.Description(), collision, MinCollisionPoint, MinRadius, MaxCollisionPoint, MaxRadius);
             if (collision && (Arc.Radius > MaxRadius) && !WallBanList.Contains(wall)) {
                 WallBanList.Add(wall);
             }
@@ -241,7 +241,7 @@ public class VoiceWave : MonoBehaviour {
                     
                 Debug.LogFormat("Arc ReflectedArc Right Link Created.");
                 reflectedWave.gameObject.name = "RightReflected";
-                //Debug.Break();
+                // Debug.Break();
             } else if (GeoLib.isEqual(collisionAngle, Arc.Angle.EndAngle)) {
                 ArcLinkModel linkModel = new ArcLinkModel();
                 SetLeftLink(linkModel);
@@ -254,7 +254,7 @@ public class VoiceWave : MonoBehaviour {
 
                 Debug.LogFormat("Arc ReflectedArc Left Link Created.");
                 reflectedWave.gameObject.name = "LeftReflected";
-                //Debug.Break();
+                // Debug.Break();
             } else {
                 double rangeOne = GeoLib.NormalizeAngle(collisionAngle - Arc.Angle.StartAngle);
                 ArcModel splitArcOne = new ArcModel(Arc.Center, Arc.Radius, Arc.Angle.StartAngle, rangeOne);
@@ -285,7 +285,7 @@ public class VoiceWave : MonoBehaviour {
 
                 Debug.LogFormat("Arc twoLinkModel {0}", twoLinkModel.Description());
                 Debug.LogFormat("Arc oneLinkModel {0}", oneLinkModel.Description());
-                //Debug.Break();
+                // Debug.Break();
                 shouldDestroy = true;
             }
             collisionWall.OnWaveDidCollide(reflectedWave);

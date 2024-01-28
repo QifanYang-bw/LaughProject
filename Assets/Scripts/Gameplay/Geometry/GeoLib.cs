@@ -147,15 +147,15 @@ public class GeoLib {
         double pointADist = 0;
         if (pointACollision) {
             pointADist = Vector2.Distance(seg.PointA, arc.Center);
-            Debug.LogFormat("ArcCollisionRadiusWithSegment pointA Collision {0}, Angle {1}, point {2}, \r\n stAngle {3}, edAngle {4}",
-                            pointACollision, CalculateAngle(arc.Center, seg.PointA), seg.PointA, arc.Angle.StartAngle, arc.Angle.EndAngle);
+            Debug.LogFormat("ArcCollisionRadiusWithSegment pointA Collision {0}, Angle {1}, point {2}, dist {3}",
+                            pointACollision, CalculateAngle(arc.Center, seg.PointA), seg.PointA, pointADist);
         }
         bool pointBCollision = IsAngleWithinArc(arc, CalculateAngle(arc.Center, seg.PointB));
         double pointBDist = 0;
         if (pointBCollision) {
             pointBDist = Vector2.Distance(seg.PointB, arc.Center);
-            Debug.LogFormat("ArcCollisionRadiusWithSegment pointB Collision {0}, Angle {1}, point {2}, \r\n stAngle {3}, edAngle {4}",
-                             pointBCollision, CalculateAngle(arc.Center, seg.PointB), seg.PointB, arc.Angle.StartAngle, arc.Angle.EndAngle);
+            Debug.LogFormat("ArcCollisionRadiusWithSegment pointB Collision {0}, Angle {1}, point {2}, dist {3}",
+                             pointBCollision, CalculateAngle(arc.Center, seg.PointB), seg.PointB, pointBDist);
         }
 
         if (!rayACollision && !rayBCollision && !perpCollision && !pointACollision && !pointBCollision) {
@@ -182,7 +182,7 @@ public class GeoLib {
         }
         if (pointBCollision && pointBDist < minDist) {
             minDist = pointBDist;
-            minPoint = seg.PointA;
+            minPoint = seg.PointB;
         }
 
         double maxDist = double.NegativeInfinity;
@@ -205,7 +205,7 @@ public class GeoLib {
         }
         if (pointBCollision && pointBDist > maxDist) {
             maxDist = pointBDist;
-            maxPoint = seg.PointA;
+            maxPoint = seg.PointB;
         }
 
         Debug.LogWarningFormat("ArcCollisionRadiusWithSegment Point Found: arc {0}, seg {1} \r\n minPos {2}, minDist {3}, maxPos {4}, maxDist {5}",
