@@ -38,8 +38,8 @@ public class Player : MonoBehaviour
 
     private void FireLaughWave()
     {
-        Debug.Log("Fire wave");
         GameObject wave = Instantiate(AssetHelper.instance.WavePrefab, transform.parent) as GameObject;
+        Debug.LogFormat("Generate Wave {0}", wave.gameObject.name);
         wave.transform.parent = transform.parent;
         wave.transform.position = transform.position;
         var voiceWave = wave.GetComponent<VoiceWave>();
@@ -48,6 +48,9 @@ public class Player : MonoBehaviour
         arc.Center = transform.position;
         float degreeZ = transform.rotation.eulerAngles.z;
         degreeZ += 90;
+
+        // Hack
+        degreeZ = 10;
         var angle = Degree2Angle(degreeZ);
         arc.Angle = new ArcAngleModel(angle - Degree2Angle(WaveRangeDegree / 2), Degree2Angle(WaveRangeDegree));
     }

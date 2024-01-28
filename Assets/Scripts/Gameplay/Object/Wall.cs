@@ -34,7 +34,7 @@ public class Wall : MonoBehaviour {
         Vector2 boardHalfSizeShiftVec = new Vector2(boardHalfLength * (float)Math.Cos(GeoLib.ConvertDegreesToRadians(transform.rotation.eulerAngles.z)),
                                                     boardHalfLength * (float)Math.Sin(GeoLib.ConvertDegreesToRadians(transform.rotation.eulerAngles.z)));
 
-        //Debug.LogFormat("Wall boardHalfSizeShiftVec {0} angle {1}", boardHalfSizeShiftVec, transform.rotation.eulerAngles.z);
+        // Debug.LogFormat("Wall boardHalfSizeShiftVec {0} angle {1}", boardHalfSizeShiftVec, transform.rotation.eulerAngles.z);
         Vector2 p1 = transform.position + (Vector3)boardHalfSizeShiftVec;
         Vector2 p2 = transform.position - (Vector3)boardHalfSizeShiftVec;
         Seg = new SegmentModel(p1, p2);

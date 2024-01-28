@@ -176,11 +176,11 @@ public class VoiceWave : MonoBehaviour {
             VoiceCollisionModel model = _collisionList[collisionIndex];
             Wall collisionWall = model.Target;
             SegmentModel seg = model.Target.Seg;
-            Debug.LogFormat("VoiceWave {0} enter collision model with seg {1}", gameObject.name, seg);
+            Debug.LogFormat("VoiceWave {0} enter collision model with seg {1}", gameObject.name, seg.Description());
 
             collisionWall.OnWaveWillCollide(this);
             if (!collisionWall.ShouldSplitOnCollision(this)) {
-                Debug.LogFormat("VoiceWave {0} does not split with seg {1}", gameObject.name, seg);
+                Debug.LogFormat("VoiceWave {0} does not split with seg {1}", gameObject.name, seg.Description());
                 collisionIndex++;
                 continue;
             }
@@ -253,7 +253,7 @@ public class VoiceWave : MonoBehaviour {
             }
             collisionWall.OnWaveDidCollide(reflectedWave);
             if (shouldDestroy) {
-                Debug.LogFormat("Arc ReflectedArc this {0} destroyed.", Arc.Description());
+                Debug.LogFormat("Arc Double Reflected; Self {0} destroyed.", Arc.Description());
                 Discard();
             }
             collisionIndex++;

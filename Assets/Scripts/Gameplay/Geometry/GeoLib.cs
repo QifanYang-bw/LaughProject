@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Unity.Burst.Intrinsics;
+using Unity.Mathematics;
 using UnityEditor.VersionControl;
 using UnityEngine;
 
@@ -107,33 +108,42 @@ public class GeoLib {
         }
         return res;
     }
-    public static (bool, double) RayLineSegmentIntersection(RayModel ray, SegmentModel lineSegment) {
-        double r_px = ray.Origin.x;
-        double r_py = ray.Origin.y;
-        double r_dx = Math.Cos(ray.Direction);
-        double r_dy = Math.Sin(ray.Direction);
 
-        double s_px = lineSegment.PointA.x;
-        double s_py = lineSegment.PointA.y;
-        double s_dx = lineSegment.PointB.x - lineSegment.PointA.x;
-        double s_dy = lineSegment.PointB.y - lineSegment.PointA.y;
+    public static (bool, Vector2) FindSegToSegIntersection(SegmentModel LineA, SegmentModel LineB) {
+        Vector2 linePoint1 = LineA.PointA;
+        Vector2 lineVec1 = LineA.PointB - LineA.PointA;
+        Vector2 linePoint2 = LineB.PointA;
+        Vector2 lineVec2 = LineB.PointB - LineB.PointA;
 
-        double det = (-s_dx * r_dy + r_dx * s_dy);
-        if (Math.Abs(det) < 1e-9) {
-            return (false, double.PositiveInfinity);
+        Vector2 lineVec3 = linePoint2 - linePoint1;
+        Vector3 crossVec1and2 = Vector3.Cross(lineVec1, lineVec2);
+        Vector3 crossVec3and2 = Vector3.Cross(lineVec3, lineVec2);
+
+        float planarFactor = Vector3.Dot(lineVec3, crossVec1and2);
+
+        //is coplanar, and not parrallel
+        if (Mathf.Abs(planarFactor) < 1e-5f && crossVec1and2.sqrMagnitude > 1e-5f) {
+            float s = Vector3.Dot(crossVec3and2, crossVec1and2) / crossVec1and2.sqrMagnitude;
+            Vector2 intersection = linePoint1 + (lineVec1 * s);
+
+            if (intersection.x - Math.Min(LineA.PointA.x, LineA.PointB.x) > -1e-6 && Math.Max(LineA.PointA.x, LineA.PointB.x) - intersection.x > -1e-6 &&
+                intersection.y - Math.Min(LineA.PointA.y, LineA.PointB.y) > -1e-6 && Math.Max(LineA.PointA.y, LineA.PointB.y) - intersection.y > -1e-6 && 
+                intersection.x - Math.Min(LineB.PointA.x, LineB.PointB.x) > -1e-6 && Math.Max(LineB.PointA.x, LineB.PointB.x) - intersection.x > -1e-6 &&
+                intersection.y - Math.Min(LineB.PointA.y, LineB.PointB.y) > -1e-6 && Math.Max(LineB.PointA.y, LineB.PointB.y) - intersection.y > -1e-6) {
+                return (true, intersection);
+            } else {
+                return (false, Vector2.zero);
+            }
+        } else {
+            return (false, Vector2.zero);
         }
+    }
+    public static (bool, Vector2) RayLineSegmentIntersection(RayModel ray, SegmentModel lineSegment) {
+        float farDist = 1e5f;
+        Vector2 farPoint = new Vector2((float)Math.Cos(ray.Direction), (float)Math.Sin(ray.Direction)) * farDist;
+        SegmentModel raySeg = new SegmentModel(ray.Origin, farPoint);
 
-        double u = (-r_dy * (r_px - s_px) + r_dx * (r_py - s_py)) / det;
-        double t = (s_dx * (r_py - s_py) - s_dy * (r_px - s_px)) / det;
-
-        // Debug.LogFormat("RayLineSegmentIntersection u {0}, t {1}", u, t);
-
-        if (t >= 0 && u >= 0 && u <= 1) {
-            double distance = Math.Sqrt(r_dx * r_dx + r_dy * r_dy) * t;
-            return (true, distance);
-        }
-
-        return (false, double.PositiveInfinity);
+        return FindSegToSegIntersection(lineSegment, raySeg);
     }
     public static (bool, Vector2, double, double) PerpendicularIntersection(Vector2 p, SegmentModel seg) {
         // Calculate the directional vectors of the line segment
@@ -168,41 +178,45 @@ public class GeoLib {
         }
     }
     public static (bool, Vector2, double) ArcCollisionRadiusWithSegment(ArcModel arc, SegmentModel seg) {
-        // Debug.LogFormat("ArcCollisionRadiusWithSegment seg {0}, arc {1}", seg.Description(), arc.Description());
+        Debug.LogFormat("ArcCollisionRadiusWithSegment seg {0}, arc {1}", seg.Description(), arc.Description());
         bool inArc = IsSegmentWithinArc(arc, seg);
         if (!inArc) {
-            // Debug.LogFormat("ArcCollisionRadiusWithSegment res False");
+            Debug.LogFormat("ArcCollisionRadiusWithSegment res False");
             return (false, Vector2.zero, double.PositiveInfinity);
         }
 
         RayModel rayA = new RayModel(arc.Center, arc.Angle.StartAngle);
-        (bool rayACollision, double rayADist) = RayLineSegmentIntersection(rayA, seg);
-        //Debug.LogFormat("ArcCollisionRadiusWithSegment rayA Collision {0}, Dist {1}", rayACollision, rayADist);
+        (bool rayACollision, Vector2 rayAPoint) = RayLineSegmentIntersection(rayA, seg);
+        double rayADist = Math.Sqrt(SquaredDistance(rayA.Origin, rayAPoint));
+        Debug.LogFormat("ArcCollisionRadiusWithSegment rayA {0} \r\n Collision {1}, Dist {2}, Point {3}", rayA.Description(), rayACollision, rayADist, rayAPoint);
+
         RayModel rayB = new RayModel(arc.Center, arc.Angle.EndAngle);
-        (bool rayBCollision, double rayBDist) = RayLineSegmentIntersection(rayB, seg);
-        //Debug.LogFormat("ArcCollisionRadiusWithSegment rayB Collision {0}, Dist {1}", rayBCollision, rayBDist);
+        (bool rayBCollision, Vector2 rayBPoint) = RayLineSegmentIntersection(rayB, seg);
+        double rayBDist = Math.Sqrt(SquaredDistance(rayB.Origin, rayBPoint));
+        Debug.LogFormat("ArcCollisionRadiusWithSegment rayB {0} \r\n Collision {1}, Dist {2}, Point {3}", rayB.Description(), rayBCollision, rayBDist, rayBPoint);
+
         (bool perpCollision, Vector2 perpIntersectPoint, double perpAngle, double perpDist) = PerpendicularIntersection(arc.Center, seg);
         if (perpCollision) {
             bool isPerpInSegment = IsAngleWithinArc(arc, perpAngle);
-            //Debug.LogFormat("ArcCollisionRadiusWithSegment perp Collision {0}, isWithin {1}, Angle {2}, Dist {3}", perpCollision, isPerpInSegment, perpAngle, perpDist);
+            Debug.LogFormat("ArcCollisionRadiusWithSegment perp Collision {0}, isWithin {1}, Angle {2}, Dist {3}", perpCollision, isPerpInSegment, perpAngle, perpDist);
             perpCollision = perpCollision && isPerpInSegment;
         } else {
-            //Debug.LogFormat("ArcCollisionRadiusWithSegment perp Collision {0}, Angle{1}, Dist {2}", perpCollision, perpAngle, perpDist);
+            Debug.LogFormat("ArcCollisionRadiusWithSegment perp Collision {0}, Angle {1}, Dist {2}", perpCollision, perpAngle, perpDist);
         }
         // The circumstance in which the segment's two endpoint become the point of contact
         bool pointACollision = IsAngleWithinArc(arc, CalculateAngle(arc.Center, seg.PointA));
         double pointADist = 0;
         if (pointACollision) {
             pointADist = Vector2.Distance(seg.PointA, arc.Center);
-            //Debug.LogFormat("ArcCollisionRadiusWithSegment pointA Collision {0}, Angle {1}, point {2}, \r\n stAngle {3}, edAngle {4}",
-                            //pointACollision, CalculateAngle(arc.Center, seg.PointA), seg.PointA, arc.Angle.StartAngle, arc.Angle.EndAngle);
+            Debug.LogFormat("ArcCollisionRadiusWithSegment pointA Collision {0}, Angle {1}, point {2}, \r\n stAngle {3}, edAngle {4}",
+                            pointACollision, CalculateAngle(arc.Center, seg.PointA), seg.PointA, arc.Angle.StartAngle, arc.Angle.EndAngle);
         }
         bool pointBCollision = IsAngleWithinArc(arc, CalculateAngle(arc.Center, seg.PointB));
         double pointBDist = 0;
         if (pointBCollision) {
             pointBDist = Vector2.Distance(seg.PointB, arc.Center);
-            //Debug.LogFormat("ArcCollisionRadiusWithSegment pointB Collision {0}, Angle {1}, point {2}, \r\n stAngle {3}, edAngle {4}",
-                             //pointBCollision, CalculateAngle(arc.Center, seg.PointB), seg.PointB, arc.Angle.StartAngle, arc.Angle.EndAngle);
+            Debug.LogFormat("ArcCollisionRadiusWithSegment pointB Collision {0}, Angle {1}, point {2}, \r\n stAngle {3}, edAngle {4}",
+                             pointBCollision, CalculateAngle(arc.Center, seg.PointB), seg.PointB, arc.Angle.StartAngle, arc.Angle.EndAngle);
         }
 
         if (!rayACollision && !rayBCollision && !perpCollision && !pointACollision && !pointBCollision) {
