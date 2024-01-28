@@ -6,14 +6,39 @@ using Assets.Scripts;
 using Assets.Scripts.Gameplay.Model;
 using Unity.Mathematics;
 using UnityEditor;
+using UnityEditor.UI;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using Object = UnityEngine.Object;
 
-public class Player : MonoBehaviour
-{
+public enum PlayerState {
+    PlayerStateTrial = 0,
+    PlayerStateActionPreparing = 1,
+    PlayerStateActionFired = 2
+}
+
+public class Player : MonoBehaviour {
+
+    public float MoveSpeed = 30;
+    public float WaveRangeDegree = 30;
+    public GameObject AimAreaObj;
+
+    [Header("Runtime Variables")]
+    private Vector3 initialPos;
+    private Quaternion initialRot;
+    public PlayerState state;
+    public float CoolDown;
+
     // Start is called before the first frame update
     void Start()
     {
+        initialPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+        initialRot = new Quaternion(transform.rotation.x, transform.rotation.y, transform.rotation.z, transform.rotation.w);
+
+        if (LevelManager.instance != null ) {
+            LevelManager.instance.OnLevelReset += ResetState;
+            LevelManager.instance.OnSwitchMode += ResetState;
+        }
     }
 
     // Update is called once per frame
@@ -29,6 +54,24 @@ public class Player : MonoBehaviour
         MoveByInput();
     }
 
+    public void ResetState() {
+        transform.position = new Vector3(initialPos.x, initialPos.y, initialPos.z);
+        transform.rotation = new Quaternion(initialRot.x, initialRot.y, initialRot.z, initialRot.w);
+        ResetTrialCount();
+    }
+
+    public void ResetTrialCount() {
+        if (LevelManager.instance == null) {
+            return;
+        }
+        LevelMode mode = LevelManager.instance.mode;
+        if (mode == LevelMode.LevelModeTrial) {
+            state = PlayerState.PlayerStateTrial;
+        } else if (mode == LevelMode.LevelModeAction) {
+            state = PlayerState.PlayerStateActionPreparing;
+        }
+    }
+
     private void TryHandleFireBtn()
     {
         if (Input.GetKeyDown(KeyCode.Mouse0))
@@ -39,6 +82,16 @@ public class Player : MonoBehaviour
 
     private void FireLaughWave()
     {
+        if (EventSystem.current.IsPointerOverGameObject()) {
+            return;
+        }
+        if (state == PlayerState.PlayerStateActionFired) {
+            return;
+        }
+        if (state == PlayerState.PlayerStateActionPreparing) {
+            state = PlayerState.PlayerStateActionFired;
+        }
+
         GameObject wave = Instantiate(AssetHelper.instance.WavePrefab, transform.parent) as GameObject;
         Debug.LogFormat("Generate Wave {0}", wave.gameObject.name);
         wave.transform.parent = transform.parent;
@@ -113,8 +166,4 @@ public class Player : MonoBehaviour
     {
         return degree / 180f * Math.PI;
     }
-
-    public float MoveSpeed = 30;
-    public float WaveRangeDegree = 30;
-    public GameObject AimAreaObj;
 }

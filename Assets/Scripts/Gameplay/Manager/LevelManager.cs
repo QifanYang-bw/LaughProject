@@ -2,15 +2,20 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Jobs;
+using UnityEditor.UI;
 using UnityEngine;
 using UnityEngine.XR;
 
 namespace Assets.Scripts {
+    public enum LevelMode {
+        LevelModeTrial = 0,
+        LevelModeAction = 1
+    }
+
     public class LevelManager : MonoBehaviour {
         public static LevelManager instance;
-
         public bool isPaused = false;
+        public LevelMode mode;
 
         [Header("Runtime Variables")]
         public Transform objectParent;
@@ -18,6 +23,7 @@ namespace Assets.Scripts {
         public LevelScoreModel previousScoreModel;
 
         public event Action OnLevelReset;
+        public event Action OnSwitchMode;
 
         public List<Wall> WallList;
         public List<NPC> NpcList;
@@ -57,10 +63,8 @@ namespace Assets.Scripts {
                 SceneUIManager.Instance.OnPauseLevel += PauseLevel;
                 SceneUIManager.Instance.OnResumeLevel += ResumeLevel;
             }
-            if (GameManager.Instance.isEditorModeOn) {
-                // 用于调试全收集动画
-                // totalGold = GetFullGoldCount() - 1;
-            }
+
+            
             //PauseLevel();
         }
 
@@ -130,10 +134,22 @@ namespace Assets.Scripts {
 
         private void CheckAllNpcLaugh()
         {
+            if (mode == LevelMode.LevelModeTrial) {
+                return;
+            }
             if (!NpcList.TrueForAll(npc => npc.IsLaughing))
                 return;
             Debug.LogFormat("Level {0} Pass!", GameManager.Instance.currentLevelName());
             Pass();
+        }
+
+        public void SwitchMode() {
+            if (mode == LevelMode.LevelModeTrial) {
+                mode = LevelMode.LevelModeAction;
+            } else {
+                mode = LevelMode.LevelModeTrial;
+            }
+            OnSwitchMode();
         }
     }
 }

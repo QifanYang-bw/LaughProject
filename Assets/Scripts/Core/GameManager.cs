@@ -6,7 +6,6 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
-using static Assets.Scripts.SceneUIManager;
 
 public class GameManager : Singleton<GameManager> {
 

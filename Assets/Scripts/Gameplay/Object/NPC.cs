@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Assets.Scripts;
 using Assets.Scripts.Gameplay.Model;
 using UnityEngine;
 
@@ -10,12 +11,16 @@ public class NPC : MonoBehaviour
     void Start()
     {
         UpdateByMood();
+
+        initialMoodValue = MoodValue;
+        if (LevelManager.instance != null) {
+            LevelManager.instance.OnLevelReset += ResetState;
+            LevelManager.instance.OnSwitchMode += ResetState;
+        }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    public void ResetState() {
+        MoodValue = initialMoodValue;
     }
 
     public void OnVoiceWaveHit(VoiceWave voiceWave)
@@ -67,6 +72,8 @@ public class NPC : MonoBehaviour
     }
 
 
+    [SerializeField]
+    private int initialMoodValue = 0;
 
     // mood value
     public int MoodValue = 0;

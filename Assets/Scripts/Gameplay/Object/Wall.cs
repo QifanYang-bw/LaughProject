@@ -2,8 +2,6 @@ using Assets.Scripts;
 using Assets.Scripts.Gameplay.Model;
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.Burst.Intrinsics;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -34,6 +32,9 @@ public class Wall : MonoBehaviour {
     public float RotateAngle = 90f;
 
 
+    public Quaternion initialAngle;
+
+
     private void Awake() {
         UpdateGeometryPosition();
     }
@@ -42,6 +43,12 @@ public class Wall : MonoBehaviour {
         if (!LevelManager.instance) {
             return;
         }
+        initialAngle = transform.rotation;
+        if (LevelManager.instance != null) {
+            LevelManager.instance.OnLevelReset += ResetState;
+            LevelManager.instance.OnSwitchMode += ResetState;
+        }
+
         LevelManager.instance.AddWall(this);
         GetComponent<SpriteRenderer>().sprite = AssetHelper.instance.WallSprites[(int)Type];
     }
@@ -131,6 +138,10 @@ public class Wall : MonoBehaviour {
     {
         transform.Rotate(0, 0, RotateAngle);
         UpdateGeometryPosition();
+    }
+
+    public void ResetState() {
+        transform.rotation = initialAngle;
     }
 
 }

@@ -76,9 +76,21 @@ public class VoiceWave : MonoBehaviour {
         rendererEx = GetComponent<VoiceWaveLineRendererEx>();
         rendererEx.arc = Arc;
 
+        if (LevelManager.instance != null) {
+            LevelManager.instance.OnLevelReset += Discard;
+            LevelManager.instance.OnSwitchMode += Discard;
+        }
+
         UpdateUIByType();
 
         ExamineCollision();
+    }
+
+    private void OnDestroy() {
+        if (LevelManager.instance != null) {
+            LevelManager.instance.OnLevelReset -= Discard;
+            LevelManager.instance.OnLevelReset -= Discard;
+        }
     }
 
     private void ExamineCollision() {
