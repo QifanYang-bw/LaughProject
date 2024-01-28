@@ -94,6 +94,9 @@ public class VoiceWave : MonoBehaviour {
             return;
         }
         _collisionList.Clear();
+        if (isHidden) {
+            return;
+        }
         foreach (Wall wall in LevelManager.instance.WallList) {
             // Check whether the wall is the source it comes from
             if (wall == null || WallBanList.Contains(wall)) {
@@ -295,9 +298,14 @@ public class VoiceWave : MonoBehaviour {
             }
         }
 
-        ExamineMicrophoneCollision(beforeRadius, afterRadius);
-        ExamineNpcCollision(beforeRadius, afterRadius);
-        ExamineSwitchCollision(beforeRadius, afterRadius);
+        if (!isHidden) {
+            ExamineMicrophoneCollision(beforeRadius, afterRadius);
+            ExamineNpcCollision(beforeRadius, afterRadius);
+            ExamineSwitchCollision(beforeRadius, afterRadius);
+        } else {
+            GetComponent<LineRenderer>().startColor = Color.clear;
+            GetComponent<LineRenderer>().endColor = Color.clear;
+        }
 
         if (RuntimeStrength <= 0) {
             Destroy(gameObject);
