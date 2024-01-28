@@ -58,7 +58,7 @@ MonoBehaviour:
   MinimumExpansionSpeed: 10
   SpeedRatio: 1
   InitialStrength: 5
-  StrengthRatio: 1
+  StrengthRatio: 0.5
   isHidden: 0
   ExpansionSpeed: 8
   RuntimeStrength: 1
@@ -66,6 +66,7 @@ MonoBehaviour:
   _collisionList: []
   _npcList: []
   _microphoneList: []
+  _switchList: []
 --- !u!120 &9046606292534119214
 LineRenderer:
   serializedVersion: 2
