@@ -4,6 +4,8 @@ using Assets.Scripts;
 using Assets.Scripts.Gameplay.Model;
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.UIElements;
+using UnityEngine.Assertions;
 
 [Serializable]
 public class VoiceCollisionModel {
@@ -28,8 +30,6 @@ public class VoiceWave : MonoBehaviour {
     public SoundTypes SoundType;
 
     public float MaximumRadius = 10f;
-    public int collisionIndex;
-
     public float MinimumExpansionSpeed = 1.0f;
     public float SpeedRatio = 1.0f;
 
@@ -136,7 +136,7 @@ public class VoiceWave : MonoBehaviour {
             (bool collision, Vector2 collisionPoint) = GeoLib.FindOneArcSegmentCollision(Arc, RightLink.LinkWall.Seg);
             if (collision) {
                 double newAngle = GeoLib.CalculateAngle(Arc.Center, collisionPoint);
-                double newAngleDelta = newAngle - Arc.Angle.StartAngle;
+                double newAngleDelta = GeoLib.NormalizeAngle(newAngle - Arc.Angle.StartAngle);
                 //Debug.LogFormat("VoiceWave update Right angle: collisionPoint {0}, startAngle {1}, newAngle {2}, angle delta {3}",
                 //                 collisionPoint, Arc.Angle.StartAngle, newAngle, newAngleDelta);
                 if (newAngleDelta < 0) {
@@ -144,9 +144,7 @@ public class VoiceWave : MonoBehaviour {
                                               collisionPoint, Arc, newAngle, newAngleDelta);
                     newAngleDelta = Math.Abs(newAngleDelta);
                 }
-                if (newAngleDelta > Math.PI) {
-                    newAngleDelta = Math.PI * 2f - newAngleDelta;
-                }
+                Assert.IsFalse(newAngleDelta > Math.PI, $"{newAngleDelta} > Math.PI");
                 //Debug.LogFormat("VoiceWave update Chain newAngle {0} angleDelta {1} \r\n Arc {2}",
                 //                 newAngle, newAngleDelta, Arc.Description());
                 RightLink.ChainAngle(newAngleDelta);
@@ -164,16 +162,14 @@ public class VoiceWave : MonoBehaviour {
             (bool collision, Vector2 collisionPoint) = GeoLib.FindOneArcSegmentCollision(Arc, LeftLink.LinkWall.Seg);
             if (collision) {
                 double newAngle = GeoLib.CalculateAngle(Arc.Center, collisionPoint);
-                double newAngleDelta = Arc.Angle.EndAngle - newAngle;
+                double newAngleDelta = GeoLib.NormalizeAngle(Arc.Angle.EndAngle - newAngle);
 
                 if (newAngleDelta < 0) {
                     Debug.LogAssertionFormat("VoiceWave update angle delta < 0: collisionPoint {0}, arc {1}, new Angle {2}, angle delta {3}",
                                               collisionPoint, Arc, newAngle, newAngleDelta);
                     newAngleDelta = Math.Abs(newAngleDelta);
                 }
-                if (newAngleDelta > Math.PI) {
-                    newAngleDelta = Math.PI * 2f - newAngleDelta;
-                }
+                Assert.IsFalse(newAngleDelta > Math.PI, $"{newAngleDelta} > Math.PI");
                 LeftLink.ChainAngle(newAngleDelta);
             } else {
                 LeftLink.isBroken = true;
@@ -234,7 +230,7 @@ public class VoiceWave : MonoBehaviour {
                     
                 Debug.LogFormat("Arc ReflectedArc Right Link Created.");
                 reflectedWave.gameObject.name = "RightReflected";
-                // Debug.Break();
+                Debug.Break();
             } else if (GeoLib.isEqual(collisionAngle, Arc.Angle.EndAngle)) {
                 ArcLinkModel linkModel = new ArcLinkModel();
                 SetLeftLink(linkModel);
@@ -247,10 +243,14 @@ public class VoiceWave : MonoBehaviour {
 
                 Debug.LogFormat("Arc ReflectedArc Left Link Created.");
                 reflectedWave.gameObject.name = "LeftReflected";
-                // Debug.Break();
+                Debug.Break();
             } else {
-                ArcModel splitArcOne = new ArcModel(Arc.Center, Arc.Radius, Arc.Angle.StartAngle, collisionAngle - Arc.Angle.StartAngle);
-                ArcModel splitArcTwo = new ArcModel(Arc.Center, Arc.Radius, collisionAngle, Arc.Angle.EndAngle - collisionAngle);
+                double rangeOne = GeoLib.NormalizeAngle(collisionAngle - Arc.Angle.StartAngle);
+                ArcModel splitArcOne = new ArcModel(Arc.Center, Arc.Radius, Arc.Angle.StartAngle, rangeOne);
+                double rangeTwo = GeoLib.NormalizeAngle(Arc.Angle.EndAngle - collisionAngle);
+                Debug.LogFormat("Arc ReflectedArc reflected. One {0} Two {1} compare {2}, calc {3}",
+                                 rangeOne, rangeTwo, GeoLib.GreaterOrEqualThan(Arc.Angle.EndAngle, collisionAngle), Arc.Angle.EndAngle - collisionAngle);
+                ArcModel splitArcTwo = new ArcModel(Arc.Center, Arc.Radius, collisionAngle, rangeTwo);
 
                 ArcLinkModel twoLinkModel = new ArcLinkModel();
                 VoiceWave splitWaveTwo = CreateWaveFromSelf(splitArcTwo, collisionWall);
@@ -274,7 +274,7 @@ public class VoiceWave : MonoBehaviour {
 
                 Debug.LogFormat("Arc twoLinkModel {0}", twoLinkModel.Description());
                 Debug.LogFormat("Arc oneLinkModel {0}", oneLinkModel.Description());
-                // Debug.Break();
+                Debug.Break();
                 shouldDestroy = true;
             }
             collisionWall.OnWaveDidCollide(reflectedWave);
@@ -373,9 +373,16 @@ public class VoiceWave : MonoBehaviour {
         VoiceWave newWave = newWaveObject.GetComponent<VoiceWave>();
         newWave.transform.position = newArc.Center;
         newWave.Arc = newArc;
-        newWave.ExpansionSpeed = ExpansionSpeed;
         newWave.MaximumRadius = MaximumRadius;
         newWave.WallBanList.Add(collisionWall);
+
+        newWave.InitialStrength = RuntimeStrength;
+        newWave.RuntimeStrength = RuntimeStrength;
+        newWave.MinimumExpansionSpeed = MinimumExpansionSpeed;
+        newWave.ExpansionSpeed = ExpansionSpeed;
+        newWave.StrengthRatio = StrengthRatio;
+        newWave.SpeedRatio = SpeedRatio;
+
         return newWave;
     }
 

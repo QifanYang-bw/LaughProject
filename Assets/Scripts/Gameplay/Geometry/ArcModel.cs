@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 [Serializable]
 public class ArcAngleModel {
@@ -38,6 +39,7 @@ public class ArcModel {
     public ArcAngleModel Angle;
 
     public void ContructModel(Vector2 Center, double Radius, double StartAngle, double AngleRange) {
+        Assert.IsFalse(AngleRange < 0, "AngleRange < 0");
         this.Center = Center;
         this.Radius = Radius;
         this.Angle = new ArcAngleModel(StartAngle, AngleRange);

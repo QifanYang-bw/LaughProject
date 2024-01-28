@@ -39,9 +39,9 @@ public class GeoLib {
         return angle;
     }
     public static double NormalizeAngle(double angle) {
-        while (angle < 0)
+        while (SmallerThan(angle, 0))
             angle += 2 * Math.PI;
-        while (angle >= 2 * Math.PI)
+        while (GreaterOrEqualThan(angle, 2 * Math.PI))
             angle -= 2 * Math.PI;
         return angle;
     }
