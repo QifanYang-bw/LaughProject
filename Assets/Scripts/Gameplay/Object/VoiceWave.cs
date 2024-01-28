@@ -217,10 +217,10 @@ public class VoiceWave : MonoBehaviour {
 
             ArcModel reflectedArc = new ArcModel(reflectedRay.Origin, Arc.Radius, reflectedCollisionAngle, 0f);
             VoiceWave reflectedWave = CreateWaveFromSelf(reflectedArc, collisionWall);
-            Debug.LogFormat("Arc ReflectedArc reflected. Arc {0}, \r\n Reflected {1}",
-                             Arc.Description(), reflectedArc.Description());
-
             double collisionAngle = GeoLib.CalculateAngle(Arc.Center, model.MinCollisionPoint);
+
+            Debug.LogFormat("Arc ReflectedArc reflected. Arc {0}, \r\n Reflected {1}, collisionAngle {2}, stAngle {3}, edAngle {4}",
+                             Arc.Description(), reflectedArc.Description(), collisionAngle, Arc.Angle.StartAngle, Arc.Angle.EndAngle);
             bool shouldDestroy = false;
             if (GeoLib.isEqual(collisionAngle, Arc.Angle.StartAngle)) {
                 ArcLinkModel linkModel = new ArcLinkModel();
@@ -230,9 +230,11 @@ public class VoiceWave : MonoBehaviour {
                 linkModel.RightArc = reflectedArc;
                 linkModel.SetRightExpand();
                 linkModel.LinkWall = collisionWall;
+                WallBanList.Add(collisionWall);
                     
                 Debug.LogFormat("Arc ReflectedArc Right Link Created.");
                 reflectedWave.gameObject.name = "RightReflected";
+                // Debug.Break();
             } else if (GeoLib.isEqual(collisionAngle, Arc.Angle.EndAngle)) {
                 ArcLinkModel linkModel = new ArcLinkModel();
                 SetLeftLink(linkModel);
@@ -241,8 +243,11 @@ public class VoiceWave : MonoBehaviour {
                 linkModel.RightArc = Arc;
                 linkModel.SetLeftExpand();
                 linkModel.LinkWall = collisionWall;
+                WallBanList.Add(collisionWall);
+
                 Debug.LogFormat("Arc ReflectedArc Left Link Created.");
                 reflectedWave.gameObject.name = "LeftReflected";
+                // Debug.Break();
             } else {
                 ArcModel splitArcOne = new ArcModel(Arc.Center, Arc.Radius, Arc.Angle.StartAngle, collisionAngle - Arc.Angle.StartAngle);
                 ArcModel splitArcTwo = new ArcModel(Arc.Center, Arc.Radius, collisionAngle, Arc.Angle.EndAngle - collisionAngle);
@@ -269,6 +274,7 @@ public class VoiceWave : MonoBehaviour {
 
                 Debug.LogFormat("Arc twoLinkModel {0}", twoLinkModel.Description());
                 Debug.LogFormat("Arc oneLinkModel {0}", oneLinkModel.Description());
+                // Debug.Break();
                 shouldDestroy = true;
             }
             collisionWall.OnWaveDidCollide(reflectedWave);

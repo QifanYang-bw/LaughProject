@@ -57,7 +57,7 @@ public class ArcModel {
     }
 
     public bool isEmpty() {
-        return Angle.AngleRange <= 7e-3f;
+        return Angle.AngleRange < 1e-3f;
     }
 
     public bool IsContainPoint(Vector2 point)

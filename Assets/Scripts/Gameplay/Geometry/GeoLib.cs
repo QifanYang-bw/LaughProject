@@ -8,12 +8,6 @@ using UnityEngine.U2D.IK;
 using UnityEngine.UIElements;
 
 public class GeoLib {
-    public static bool isEqual(double a, double b) {
-        return Math.Abs(a - b) < 1e-6;
-    }
-    public static bool isEqual(float a, float b) {
-        return Math.Abs(a - b) < 1e-6;
-    }
     public static double DotProduct(Vector2 a, Vector2 b) {
         return a.x * b.x + a.y * b.y;
     }
@@ -336,16 +330,22 @@ public class GeoLib {
         }
     }
 
+    public static bool isEqual(double a, double b) {
+        return Math.Abs(a - b) < 1e-3;
+    }
+    public static bool isEqual(float a, float b) {
+        return Math.Abs(a - b) < 1e-3;
+    }
     public static bool SmallerOrEqualThan(double d1, double d2) {
-        return d2 - d1 > -1e-6;
+        return d2 - d1 > -1e-3;
     }
     public static bool GreaterOrEqualThan(double d1, double d2) {
-        return d1 - d2 > -1e-6;
+        return d1 - d2 > -1e-3;
     }
     public static bool SmallerThan(double d1, double d2) {
-        return d2 - d1 > 1e-6;
+        return d2 - d1 > -1e-3;
     }
     public static bool GreaterThan(double d1, double d2) {
-        return d1 - d2 > 1e-6;
+        return d1 - d2 > -1e-3;
     }
 }
