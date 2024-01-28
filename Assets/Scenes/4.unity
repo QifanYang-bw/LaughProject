@@ -253,17 +253,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isPaused: 0
-  FullGoldAnimator: {fileID: 0}
-  PatternSprite: {fileID: 0}
   objectParent: {fileID: 0}
   curElapsedTime: 0
   previousScoreModel:
     passDuration: 0
     difficulty: 0
-  twistEffect: {fileID: 0}
-  blurEffect: {fileID: 0}
-  wallList: []
-  Npcs: []
+  WallList: []
+  NpcList: []
+  MicrophoneList: []
 --- !u!4 &112110987 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5568639466003884350, guid: 4801621f11017464281577ad8fa38a2b,
@@ -906,7 +903,7 @@ PrefabInstance:
     - target: {fileID: 5568639466003884350, guid: 4801621f11017464281577ad8fa38a2b,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.19999999
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 5568639466003884350, guid: 4801621f11017464281577ad8fa38a2b,
         type: 3}
@@ -1073,7 +1070,7 @@ PrefabInstance:
     - target: {fileID: 5568639466003884350, guid: 4801621f11017464281577ad8fa38a2b,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.19999999
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 5568639466003884350, guid: 4801621f11017464281577ad8fa38a2b,
         type: 3}
