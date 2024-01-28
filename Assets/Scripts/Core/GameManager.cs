@@ -107,7 +107,7 @@ public class GameManager : Singleton<GameManager> {
         if (levelProgress >= historyMaximumLevelProgress) {
             historyMaximumLevelProgress = levelProgress;
         }
-        if (levelProgress >= EndLevelIndex) {
+        if (levelProgress > EndLevelIndex) {
             GoPrologue();
             return;
         }

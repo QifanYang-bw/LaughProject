@@ -60,7 +60,7 @@ MonoBehaviour:
   LevelSelectionSceneIndex: 1
   CreditSceneIndex: 2
   BeginLevelIndex: 3
-  EndLevelIndex: 11
+  EndLevelIndex: 9
   CanShowLevelSelection: 0
   state: 0
 --- !u!114 &6397378926993368453
@@ -124,12 +124,10 @@ MonoBehaviour:
   - Level_1
   - Level_2
   - Level_3
-  - Level_4
   - Level_5
-  - Level_6
   - Level_7
   - Level_8
-  levelMusic: 020000000200000002000000010000000100000001000000010000000100000001000000010000000100000002000000
+  levelMusic: 02000000020000000200000001000000010000000100000001000000010000000100000001000000
 --- !u!114 &3318230115090820234
 MonoBehaviour:
   m_ObjectHideFlags: 0

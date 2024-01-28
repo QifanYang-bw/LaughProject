@@ -1422,6 +1422,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: LevelSelectionButton (14)
       objectReference: {fileID: 0}
+    - target: {fileID: 2214685620223653793, guid: cbdb299cb82ae3d46bd9198c5b986b77,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2871023192996318753, guid: cbdb299cb82ae3d46bd9198c5b986b77,
         type: 3}
       propertyPath: levelNumber
@@ -1583,6 +1588,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: LevelSelectionButton (13)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2214685620223653793, guid: cbdb299cb82ae3d46bd9198c5b986b77,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2871023192996318753, guid: cbdb299cb82ae3d46bd9198c5b986b77,
         type: 3}
