@@ -403,6 +403,7 @@ public class VoiceWave : MonoBehaviour {
         newWave.MaximumRadius = MaximumRadius;
         newWave.WallBanList.Add(collisionWall);
 
+        newWave.SoundType = SoundType;
         newWave.InitialStrength = RuntimeStrength;
         newWave.RuntimeStrength = RuntimeStrength;
         newWave.MinimumExpansionSpeed = MinimumExpansionSpeed;
