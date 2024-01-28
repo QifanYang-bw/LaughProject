@@ -73,6 +73,9 @@ public class VoiceWave : MonoBehaviour {
         _switchList = LevelManager.instance != null ? new List<Switch>(LevelManager.instance.SwitchList) :
             new List<Switch>(transform.parent.GetComponentsInChildren<Switch>());
 
+        GetComponent<LineRenderer>().startWidth = 1;
+        GetComponent<LineRenderer>().endWidth = 1;
+
         rendererEx = GetComponent<VoiceWaveLineRendererEx>();
         rendererEx.arc = Arc;
 
